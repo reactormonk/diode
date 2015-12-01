@@ -5,7 +5,7 @@
         
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <title>Action Processors | Diode</title>
+        <title>Examples | Diode</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="generator" content="GitBook 2.5.2">
@@ -37,10 +37,8 @@
         
     
     
-    <link rel="next" href="../UsageWithReact.html" />
     
-    
-    <link rel="prev" href="../advanced/PotActions.html" />
+    <link rel="prev" href="../UsageWithReact.html" />
     
 
         
@@ -48,7 +46,7 @@
     <body>
         
         
-    <div class="book" data-level="2.3" data-chapter-title="Action Processors" data-filepath="advanced/ActionProcessors.md" data-basepath=".." data-revision="Tue Dec 01 2015 20:05:30 GMT+0200 (FLE Standard Time)">
+    <div class="book" data-level="4" data-chapter-title="Examples" data-filepath="examples/README.md" data-basepath=".." data-revision="Tue Dec 01 2015 20:05:30 GMT+0200 (FLE Standard Time)">
     
 
 <div class="book-summary">
@@ -218,7 +216,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="2.3" data-path="advanced/ActionProcessors.html">
+        <li class="chapter " data-level="2.3" data-path="advanced/ActionProcessors.html">
             
                 
                     <a href="../advanced/ActionProcessors.html">
@@ -253,7 +251,7 @@
             
         </li>
     
-        <li class="chapter " data-level="4" data-path="examples/index.html">
+        <li class="chapter active" data-level="4" data-path="examples/index.html">
             
                 
                     <a href="../examples/index.html">
@@ -301,32 +299,21 @@
                 
                     <section class="normal" id="section-">
                     
-                        <h1 id="action-processors">Action Processors</h1>
-<p><img src="../images/action-processors.png" style="float: right; padding: 10px" ;=""></p>
-<p>Sometimes you need to add a new aspect to action processing requiring access to all dispatched actions. Diode provides an extension mechanism to get in between
-dispatching an action and handling it. These <em>action processors</em> may do whatever they want with the incoming action, such as logging, modifying or cancelling
-them. The processors can also intercept the return value from the action handler to, for example, capture the modified model into an undo stack.</p>
-<h2 id="usage">Usage</h2>
-<p>To define an action processor, create a class extending the <code>ActionProcessor[M]</code> trait and override the <code>process</code> function.</p>
-<pre><code class="lang-scala"><span class="token keyword">class</span> LoggingProcessor<span class="token punctuation">[</span>M<span class="token punctuation">]</span> <span class="token keyword">extends</span> ActionProcessor<span class="token punctuation">[</span>M<span class="token punctuation">]</span> <span class="token punctuation">{</span>
-  <span class="token keyword">var</span> log <span class="token operator">=</span> Vector<span class="token punctuation">.</span>empty<span class="token punctuation">[</span><span class="token punctuation">(</span><span class="token builtin">Long</span><span class="token punctuation">,</span> <span class="token builtin">String</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
-  <span class="token keyword">def</span> process<span class="token punctuation">(</span>dispatch<span class="token operator">:</span> Dispatcher<span class="token punctuation">,</span> action<span class="token operator">:</span> <span class="token builtin">AnyRef</span><span class="token punctuation">,</span> next<span class="token operator">:</span> <span class="token punctuation">(</span><span class="token builtin">AnyRef</span><span class="token punctuation">)</span> <span class="token keyword">=&gt;</span> ActionResult<span class="token punctuation">[</span>M<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token operator">:</span> ActionResult<span class="token punctuation">[</span>M<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
-    <span class="token comment" spellcheck="true">// log the action</span>
-    log <span class="token operator">=</span> log <span class="token operator">:</span><span class="token operator">+</span> <span class="token punctuation">(</span><span class="token keyword">new</span> java<span class="token punctuation">.</span>util<span class="token punctuation">.</span>Date<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>getTime<span class="token punctuation">,</span> action<span class="token punctuation">.</span>toString<span class="token punctuation">)</span>
-    <span class="token comment" spellcheck="true">// call the next processor</span>
-    next<span class="token punctuation">(</span>action<span class="token punctuation">)</span>
-  <span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
-</code></pre>
-<p>Add it to the processing chain with <code>addProcessor</code></p>
-<pre><code class="lang-scala"><span class="token keyword">val</span> logProcessor <span class="token operator">=</span> <span class="token keyword">new</span> LoggingProcessor<span class="token punctuation">[</span>RootModel<span class="token punctuation">]</span>
-AppCircuit<span class="token punctuation">.</span>addProcessor<span class="token punctuation">(</span>logProcessor<span class="token punctuation">)</span>
-</code></pre>
-<p>Later you can remove a processor if you don&apos;t need it anymore. </p>
-<pre><code class="lang-scala">AppCircuit<span class="token punctuation">.</span>removeProcessor<span class="token punctuation">(</span>logProcessor<span class="token punctuation">)</span>
-</code></pre>
-<h2 id="common-use-cases">Common Use Cases</h2>
-<p>TBW</p>
+                        <h1 id="examples">Examples</h1>
+<p>To demonstrate how to use Diode in various cases, check out these example projects.</p>
+<h2 id="simple">Simple</h2>
+<p>A very simple Diode application having just a single counter as application model</p>
+<p><a href="https://github.com/ochrons/diode/tree/master/examples/simple" target="_blank">Source</a> | <a href="simple">Preview</a></p>
+<h2 id="treeview">Treeview</h2>
+<p>This is a bit more complex example application using Diode. It features a hierarchical data structure representing a directory tree.</p>
+<p><a href="https://github.com/ochrons/diode/tree/master/examples/treeview" target="_blank">Source</a> | <a href="treeview">Preview</a></p>
+<h2 id="todomvc">TodoMVC</h2>
+<p>The familiar TodoMVC application implemented in Diode React. Adapted from 
+<a href="https://github.com/tastejs/todomvc/tree/master/examples/scalajs-react" target="_blank">TodoMVC Scala.js React</a>.</p>
+<p><a href="https://github.com/ochrons/diode/tree/master/examples/todomvc" target="_blank">Source</a> | <a href="todomvc">Preview</a></p>
+<h2 id="animation-with-raf">Animation with RAF</h2>
+<p>This example demonstrates how to batch and execute actions using <code>requestAnimationFrame</code> and an action processor, to build smooth and easy animations.</p>
+<p><a href="https://github.com/ochrons/diode/tree/master/examples/raf" target="_blank">Source</a> | <a href="raf">Preview</a></p>
 
                     
                     </section>
@@ -337,10 +324,8 @@ AppCircuit<span class="token punctuation">.</span>addProcessor<span class="token
         </div>
 
         
-        <a href="../advanced/PotActions.html" class="navigation navigation-prev " aria-label="Previous page: Stateful Actions"><i class="fa fa-angle-left"></i></a>
+        <a href="../UsageWithReact.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: Usage with React"><i class="fa fa-angle-left"></i></a>
         
-        
-        <a href="../UsageWithReact.html" class="navigation navigation-next " aria-label="Next page: Usage with React"><i class="fa fa-angle-right"></i></a>
         
     </div>
 </div>
