@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="2.2" data-chapter-title="Stateful Actions" data-filepath="advanced/PotActions.md" data-basepath=".." data-revision="Tue Dec 01 2015 20:17:12 GMT+0200 (FLE Standard Time)">
+    <div class="book" data-level="2.2" data-chapter-title="Stateful Actions" data-filepath="advanced/PotActions.md" data-basepath=".." data-revision="Fri Dec 04 2015 20:17:49 GMT+0200 (FLE Standard Time)">
     
 
 <div class="book-summary">
@@ -320,10 +320,10 @@ function to build a new instance of your action.</p>
 <p>Now you can write an action handler managing the different states of your <code>UpdateTodos</code>.</p>
 <pre><code class="lang-scala"><span class="token keyword">override</span> <span class="token keyword">def</span> handle <span class="token operator">=</span> <span class="token punctuation">{</span>
   <span class="token keyword">case</span> action<span class="token operator">:</span> UpdateTodos <span class="token keyword">=&gt;</span>
-    <span class="token keyword">val</span> updateF <span class="token operator">=</span> action<span class="token punctuation">.</span>effect<span class="token punctuation">(</span>loadTodos<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">(</span>todos <span class="token keyword">=&gt;</span> Todos<span class="token punctuation">(</span>todos<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">val</span> updateEffect <span class="token operator">=</span> action<span class="token punctuation">.</span>effect<span class="token punctuation">(</span>loadTodos<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">(</span>todos <span class="token keyword">=&gt;</span> Todos<span class="token punctuation">(</span>todos<span class="token punctuation">)</span><span class="token punctuation">)</span>
     action<span class="token punctuation">.</span>handle <span class="token punctuation">{</span>
       <span class="token keyword">case</span> PotEmpty <span class="token keyword">=&gt;</span>
-        updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>pending<span class="token punctuation">,</span> updateF<span class="token punctuation">)</span>
+        updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>pending<span class="token punctuation">,</span> updateEffect<span class="token punctuation">)</span>
       <span class="token keyword">case</span> PotPending <span class="token keyword">=&gt;</span>
         noChange
       <span class="token keyword">case</span> PotReady <span class="token keyword">=&gt;</span>
@@ -347,8 +347,8 @@ action via an external handler function through <code>handleWith</code>.</p>
 <pre><code class="lang-scala"><span class="token keyword">import</span> scala<span class="token punctuation">.</span>concurrent<span class="token punctuation">.</span>duration<span class="token punctuation">.</span>_
 <span class="token keyword">override</span> <span class="token keyword">def</span> handle <span class="token operator">=</span> <span class="token punctuation">{</span>
   <span class="token keyword">case</span> action<span class="token operator">:</span> UpdateTodos <span class="token keyword">=&gt;</span>
-    <span class="token keyword">val</span> updateF <span class="token operator">=</span> action<span class="token punctuation">.</span>effect<span class="token punctuation">(</span>loadTodos<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">(</span>todos <span class="token keyword">=&gt;</span> Todos<span class="token punctuation">(</span>todos<span class="token punctuation">)</span><span class="token punctuation">)</span>
-    action<span class="token punctuation">.</span>handleWith<span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> updateF<span class="token punctuation">)</span><span class="token punctuation">(</span>PotAction<span class="token punctuation">.</span>handler<span class="token punctuation">(</span>Retry<span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">100</span><span class="token punctuation">.</span>millis<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">val</span> updateEffect <span class="token operator">=</span> action<span class="token punctuation">.</span>effect<span class="token punctuation">(</span>loadTodos<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">(</span>todos <span class="token keyword">=&gt;</span> Todos<span class="token punctuation">(</span>todos<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    action<span class="token punctuation">.</span>handleWith<span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> updateEffect<span class="token punctuation">)</span><span class="token punctuation">(</span>PotAction<span class="token punctuation">.</span>handler<span class="token punctuation">(</span>Retry<span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">100</span><span class="token punctuation">.</span>millis<span class="token punctuation">)</span><span class="token punctuation">)</span>
 <span class="token punctuation">}</span>
 </code></pre>
 <p>Here we use a predefined handler from the <code>PotAction</code> object, which supports retries and periodic notification of pending actions.</p>

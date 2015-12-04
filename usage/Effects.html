@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.5" data-chapter-title="Async Effects" data-filepath="usage/Effects.md" data-basepath=".." data-revision="Tue Dec 01 2015 20:17:12 GMT+0200 (FLE Standard Time)">
+    <div class="book" data-level="1.5" data-chapter-title="Async Effects" data-filepath="usage/Effects.md" data-basepath=".." data-revision="Fri Dec 04 2015 20:17:49 GMT+0200 (FLE Standard Time)">
     
 
 <div class="book-summary">
@@ -309,12 +309,9 @@ request to the server, are not allowed. This restriction is mainly to make testi
 return actions. While this keeps action handlers pure, it makes the application design fragmented. In Diode we follow in the footsteps of Elm by wrapping any
 side effects into <code>Effect</code>s and returning them from the action handler with the updated model.</p>
 <h2 id="what-is-an-effect">What is an Effect?</h2>
-<p>In an Effect we <em>describe</em> a computation instead of directly <em>executing</em> it. It&apos;s quite similar to the <code>IO</code> concept in Scalaz/Haskell but with a very
-straightforward implementation:</p>
-<pre><code class="lang-scala"><span class="token keyword">type</span> Effect<span class="token punctuation">[</span>Action <span class="token operator">&lt;</span><span class="token operator">:</span> <span class="token builtin">AnyRef</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">=&gt;</span> Future<span class="token punctuation">[</span>Action<span class="token punctuation">]</span>
-</code></pre>
-<p>It&apos;s just a function returning a <code>Future[Action]</code>. The action returned by the <code>Future</code> is automatically dispatched. If your effect doesn&apos;t need anything
-dispatched, return a <code>None</code>.</p>
+<p>In an Effect we <em>describe</em> a computation instead of directly <em>executing</em> it. It&apos;s quite similar to the <code>IO</code> concept in Scalaz/Haskell, containing a function
+that returns a <code>Future[AnyRef]</code>.</p>
+<p>The action returned by the <code>Future</code> is automatically dispatched by the Circuit. If your effect doesn&apos;t need anything dispatched, return a <code>None</code>.</p>
 <h3 id="using-effects">Using Effects</h3>
 <p>To create an effect you need a function that runs something asynchronously, for example performing an Ajax call.</p>
 <pre><code class="lang-scala"><span class="token keyword">import</span> org<span class="token punctuation">.</span>scalajs<span class="token punctuation">.</span>dom<span class="token punctuation">.</span>ext<span class="token punctuation">.</span>Ajax
@@ -322,10 +319,10 @@ dispatched, return a <code>None</code>.</p>
 <span class="token keyword">case</span> <span class="token keyword">class</span> NewMessages<span class="token punctuation">(</span>msgs<span class="token operator">:</span> <span class="token builtin">String</span><span class="token punctuation">)</span>
 
 <span class="token keyword">def</span> loadMessagesEffect<span class="token punctuation">(</span>user<span class="token operator">:</span> <span class="token builtin">String</span><span class="token punctuation">)</span> <span class="token operator">=</span> 
-  <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">=&gt;</span> Ajax<span class="token punctuation">.</span>get<span class="token punctuation">(</span>s<span class="token string">&quot;/user/messages?id=$user&quot;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>map<span class="token punctuation">(</span>r <span class="token keyword">=&gt;</span> NewMessages<span class="token punctuation">(</span>r<span class="token punctuation">.</span>responseText<span class="token punctuation">)</span><span class="token punctuation">)</span>
+  Effect<span class="token punctuation">(</span>Ajax<span class="token punctuation">.</span>get<span class="token punctuation">(</span>s<span class="token string">&quot;/user/messages?id=$user&quot;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>map<span class="token punctuation">(</span>r <span class="token keyword">=&gt;</span> NewMessages<span class="token punctuation">(</span>r<span class="token punctuation">.</span>responseText<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 </code></pre>
-<p>Here the <code>loadMessagesEffect</code> doesn&apos;t actually execute the Ajax call immediately, but just provides a function to do so. Once the future does complete, the
-result is mapped into a <code>NewMessages</code> action that gets automatically dispatched.</p>
+<p>Here the <code>loadMessagesEffect</code> doesn&apos;t actually execute the Ajax call immediately, but just provides an effect to do so. Once the <code>Ajax</code> future does complete, the
+result is mapped into a <code>NewMessages</code> action.</p>
 <p>To return the effects alongside the new model, use one of the helper functions provided by <code>ActionHandler</code>.</p>
 <pre><code class="lang-scala"><span class="token keyword">case</span> <span class="token keyword">class</span> Messages<span class="token punctuation">(</span>msgs<span class="token operator">:</span> <span class="token builtin">String</span><span class="token punctuation">,</span> loadTime<span class="token operator">:</span> <span class="token builtin">Int</span><span class="token punctuation">)</span>
 
@@ -338,15 +335,23 @@ result is mapped into a <code>NewMessages</code> action that gets automatically 
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<p>If you have no state change, use <code>effectOnly</code> and if you want your effects to be run in parallel (normally they are run in serial), use <code>updatedPar</code>. For example
-we might want to get periodic notifications (using <code>runAfter</code>) while the messages are being loaded, to update the UI accordingly.</p>
+<p>If you have no state change, use <code>effectOnly</code> instead of <code>updated</code>.</p>
+<h3 id="combining-effects">Combining effects</h3>
+<p>If you want to combine multiple effects into one, join them with the <code>&gt;&gt;</code>, <code>&lt;&lt;</code> and <code>+</code> operators.</p>
+<pre><code class="lang-scala"><span class="token keyword">val</span> serialAB <span class="token operator">=</span> Effect<span class="token punctuation">(</span>a<span class="token punctuation">)</span> <span class="token operator">&gt;&gt;</span> Effect<span class="token punctuation">(</span>b<span class="token punctuation">)</span>  <span class="token comment" spellcheck="true">// b is run after a completes</span>
+<span class="token keyword">val</span> serialBA <span class="token operator">=</span> Effect<span class="token punctuation">(</span>a<span class="token punctuation">)</span> <span class="token operator">&lt;&lt;</span> Effect<span class="token punctuation">(</span>b<span class="token punctuation">)</span>  <span class="token comment" spellcheck="true">// a is run after b completes</span>
+<span class="token keyword">val</span> parallelAB <span class="token operator">=</span> Effect<span class="token punctuation">(</span>a<span class="token punctuation">)</span> <span class="token operator">+</span> Effect<span class="token punctuation">(</span>b<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// a and b are run in parallel</span>
+</code></pre>
+<p>For example we might want to get periodic notifications (using <code>after</code>) while the messages are being loaded, to update the UI accordingly.</p>
 <pre><code class="lang-scala">    <span class="token keyword">case</span> LoadMessages<span class="token punctuation">(</span>user<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
-      updatedPar<span class="token punctuation">(</span>value<span class="token punctuation">.</span>copy<span class="token punctuation">(</span>loadTime <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> loadMessagesEffect<span class="token punctuation">(</span>user<span class="token punctuation">)</span><span class="token punctuation">,</span> runAfter<span class="token punctuation">(</span><span class="token number">500</span><span class="token punctuation">.</span>millis<span class="token punctuation">)</span><span class="token punctuation">(</span>StillLoading<span class="token punctuation">)</span><span class="token punctuation">)</span>
+      updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>copy<span class="token punctuation">(</span>loadTime <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> 
+        loadMessagesEffect<span class="token punctuation">(</span>user<span class="token punctuation">)</span> <span class="token operator">+</span> Effect<span class="token punctuation">.</span>action<span class="token punctuation">(</span>StillLoading<span class="token punctuation">)</span><span class="token punctuation">.</span>after<span class="token punctuation">(</span><span class="token number">500</span><span class="token punctuation">.</span>millis<span class="token punctuation">)</span><span class="token punctuation">)</span>
     <span class="token keyword">case</span> NewMessages<span class="token punctuation">(</span>msgs<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
       updated<span class="token punctuation">(</span>Messages<span class="token punctuation">(</span>msgs<span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
     <span class="token keyword">case</span> StillLoading <span class="token keyword">=&gt;</span>
       <span class="token keyword">if</span><span class="token punctuation">(</span>value<span class="token punctuation">.</span>loadTime <span class="token operator">!=</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
-        updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>copy<span class="token punctuation">(</span>loadTime <span class="token operator">=</span> value<span class="token punctuation">.</span>loadTime <span class="token operator">+</span> <span class="token number">500</span><span class="token punctuation">)</span><span class="token punctuation">,</span> runAfter<span class="token punctuation">(</span><span class="token number">500</span><span class="token punctuation">.</span>millis<span class="token punctuation">)</span><span class="token punctuation">(</span>StillLoading<span class="token punctuation">)</span><span class="token punctuation">)</span> 
+        updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>copy<span class="token punctuation">(</span>loadTime <span class="token operator">=</span> value<span class="token punctuation">.</span>loadTime <span class="token operator">+</span> <span class="token number">500</span><span class="token punctuation">)</span><span class="token punctuation">,</span>  
+          Effect<span class="token punctuation">.</span>action<span class="token punctuation">(</span>StillLoading<span class="token punctuation">)</span><span class="token punctuation">.</span>after<span class="token punctuation">(</span><span class="token number">500</span><span class="token punctuation">.</span>millis<span class="token punctuation">)</span><span class="token punctuation">)</span> 
       <span class="token keyword">else</span>
         noChange
 </code></pre>
