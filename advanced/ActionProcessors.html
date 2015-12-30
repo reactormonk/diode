@@ -40,7 +40,7 @@
     <link rel="next" href="../UsageWithReact.html" />
     
     
-    <link rel="prev" href="../advanced/PotActions.html" />
+    <link rel="prev" href="../advanced/PotCollection.html" />
     
 
         
@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="2.3" data-chapter-title="Action Processors" data-filepath="advanced/ActionProcessors.md" data-basepath=".." data-revision="Fri Dec 04 2015 20:17:49 GMT+0200 (FLE Standard Time)">
+    <div class="book" data-level="2.4" data-chapter-title="Action Processors" data-filepath="advanced/ActionProcessors.md" data-basepath=".." data-revision="Wed Dec 30 2015 22:50:34 GMT+0200 (FLE Standard Time)">
     
 
 <div class="book-summary">
@@ -218,14 +218,29 @@
             
         </li>
     
-        <li class="chapter active" data-level="2.3" data-path="advanced/ActionProcessors.html">
+        <li class="chapter " data-level="2.3" data-path="advanced/PotCollection.html">
+            
+                
+                    <a href="../advanced/PotCollection.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.3.</b>
+                        
+                        Async Virtual Collections
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter active" data-level="2.4" data-path="advanced/ActionProcessors.html">
             
                 
                     <a href="../advanced/ActionProcessors.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>2.3.</b>
+                            <b>2.4.</b>
                         
                         Action Processors
                     </a>
@@ -325,8 +340,56 @@ AppCircuit<span class="token punctuation">.</span>addProcessor<span class="token
 <p>Later you can remove a processor if you don&apos;t need it anymore. </p>
 <pre><code class="lang-scala">AppCircuit<span class="token punctuation">.</span>removeProcessor<span class="token punctuation">(</span>logProcessor<span class="token punctuation">)</span>
 </code></pre>
-<h2 id="common-use-cases">Common Use Cases</h2>
-<p>TBW</p>
+<h2 id="use-cases">Use Cases</h2>
+<h3 id="batched-action-processing">Batched Action Processing</h3>
+<p>To achieve smooth animation in the browser you either need to use CSS transitions or run your animation logic using
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame" target="_blank">RAF</a> (<code>requestAnimationFrame</code>). Using RAF guarantees that your code is run at
+the refresh rate of the display (typically 60Hz) delivering smooth animation. Additionally RAF provides an accurate time value to calculate your animation
+transitions correctly.</p>
+<p>In order for your application to utilize RAF you need to update model in the RAF callback and do so for all animations that are currently running. A convenient
+way to achieve this is to use a <em>batching</em> action processor that collects dispatched animation actions into a batch and runs them later in the RAF callback.</p>
+<p>The <a href="../examples/index.html">RAF example</a> provides a <code>RAFBatcher</code> implementation that does just this. It uses a special marker trait (<code>RAFAction</code>) to identify
+which actions should be filtered out and batched. When such an action is encountered, it&apos;s wrapped inside a <code>RAFWrapper</code> and added to the current batch. If not
+already done, a RAF callback is requested. When the callback is executed, all batched actions are dispatched and unwrapped when they enter the <code>RAFBatcher</code>&apos;s
+<code>process</code> function. The processor also dispatches a special <code>RAFTimeStamp</code> action containing accurate time for the animation actions. Within your Circuit you
+should handle this action and update the model with the current timestamp.</p>
+<pre><code class="lang-scala"><span class="token keyword">val</span> timestampHandler <span class="token operator">=</span> <span class="token keyword">new</span> ActionHandler<span class="token punctuation">(</span>zoomRW<span class="token punctuation">(</span>_<span class="token punctuation">.</span>now<span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">(</span>m<span class="token punctuation">,</span> v<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span> m<span class="token punctuation">.</span>copy<span class="token punctuation">(</span>now <span class="token operator">=</span> v<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">override</span> <span class="token keyword">def</span> handle <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token keyword">case</span> RAFTimeStamp<span class="token punctuation">(</span>time<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
+      updated<span class="token punctuation">(</span>time<span class="token punctuation">)</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>The <code>RAFBatcher</code> also takes advantage of Circuit&apos;s feature of processing a sequence of actions in one go, calling listeners only after all the actions have
+been processed. This improves performance and guarantees correct display of animation results. If your application dispatches a lot of small actions, it may
+make sense to use a batching strategy even when no animations are involved.</p>
+<h3 id="persisting-application-state">Persisting Application State</h3>
+<p>Diode <a href="https://github.com/ochrons/diode/tree/master/diode-devtools" target="_blank">devtools</a> project contains a convenient action processor for saving and restoring
+application state. This can be useful when encountering a bug in development and wanting to replicate the same application state later, after the code has been
+fixed and application reloaded.</p>
+<p>The gist of the state persisting action processor is in the <code>process</code> function:</p>
+<pre><code class="lang-scala"><span class="token keyword">override</span> <span class="token keyword">def</span> process<span class="token punctuation">(</span>dispatch<span class="token operator">:</span> Dispatcher<span class="token punctuation">,</span> action<span class="token operator">:</span> <span class="token builtin">AnyRef</span><span class="token punctuation">,</span> next<span class="token operator">:</span> <span class="token punctuation">(</span><span class="token builtin">AnyRef</span><span class="token punctuation">)</span> <span class="token keyword">=&gt;</span> ActionResult<span class="token punctuation">[</span>M<span class="token punctuation">]</span><span class="token punctuation">,</span> currentModel<span class="token operator">:</span> M<span class="token punctuation">)</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
+  action <span class="token keyword">match</span> <span class="token punctuation">{</span>
+    <span class="token keyword">case</span> Save<span class="token punctuation">(</span>id<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
+      <span class="token comment" spellcheck="true">// pickle and save</span>
+      save<span class="token punctuation">(</span>id<span class="token punctuation">,</span> pickle<span class="token punctuation">(</span>currentModel<span class="token punctuation">)</span><span class="token punctuation">)</span>
+      ActionResult<span class="token punctuation">.</span>NoChange
+    <span class="token keyword">case</span> Load<span class="token punctuation">(</span>id<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
+      <span class="token comment" spellcheck="true">// perform state load and unpickling in an effect</span>
+      <span class="token keyword">val</span> effect <span class="token operator">=</span> Effect<span class="token punctuation">(</span>load<span class="token punctuation">(</span>id<span class="token punctuation">)</span><span class="token punctuation">.</span>map<span class="token punctuation">(</span>p <span class="token keyword">=&gt;</span> Loaded<span class="token punctuation">(</span>unpickle<span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+      ActionResult<span class="token punctuation">.</span>EffectOnly<span class="token punctuation">(</span>effect<span class="token punctuation">)</span>
+    <span class="token keyword">case</span> Loaded<span class="token punctuation">(</span>newModel<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
+      <span class="token comment" spellcheck="true">// perform model update</span>
+      ActionResult<span class="token punctuation">.</span>ModelUpdate<span class="token punctuation">(</span>newModel<span class="token punctuation">)</span>
+    <span class="token keyword">case</span> _ <span class="token keyword">=&gt;</span>
+      next<span class="token punctuation">(</span>action<span class="token punctuation">)</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>It simply catches a few predefined actions for saving and loading application state and lets everything else pass through to the next processor. Because loading
+happens asynchronously, it is lifted into an <code>Effect</code> and once loading is completed a <code>Loaded</code> action is dispatched. Within <code>Loaded</code> action handler the
+application state is actually modified.</p>
+<p>The <a href="../examples/index.html">TodoMVC example</a> shows how to use <code>PersistState</code> action processor in an application.</p>
 
                     
                     </section>
@@ -337,7 +400,7 @@ AppCircuit<span class="token punctuation">.</span>addProcessor<span class="token
         </div>
 
         
-        <a href="../advanced/PotActions.html" class="navigation navigation-prev " aria-label="Previous page: Stateful Actions"><i class="fa fa-angle-left"></i></a>
+        <a href="../advanced/PotCollection.html" class="navigation navigation-prev " aria-label="Previous page: Async Virtual Collections"><i class="fa fa-angle-left"></i></a>
         
         
         <a href="../UsageWithReact.html" class="navigation navigation-next " aria-label="Next page: Usage with React"><i class="fa fa-angle-right"></i></a>

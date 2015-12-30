@@ -1182,7 +1182,8 @@ $c_Ldiode_ActionHandler.prototype.init___Ldiode_ModelRW = (function(modelRW) {
   return this
 });
 $c_Ldiode_ActionHandler.prototype.updated__O__Ldiode_ActionResult = (function(newValue) {
-  return new $c_Ldiode_ActionResult$ModelUpdate().init___O(this.modelRW$1.updated__O__O(newValue))
+  var this$1 = this.modelRW$1;
+  return new $c_Ldiode_ActionResult$ModelUpdate().init___O($s_Ldiode_BaseModelRW$class__updated__Ldiode_BaseModelRW__O__O(this$1, newValue))
 });
 function $is_Ldiode_ActionHandler(obj) {
   return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Ldiode_ActionHandler)))
@@ -1195,6 +1196,21 @@ function $isArrayOf_Ldiode_ActionHandler(obj, depth) {
 }
 function $asArrayOf_Ldiode_ActionHandler(obj, depth) {
   return (($isArrayOf_Ldiode_ActionHandler(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Ldiode.ActionHandler;", depth))
+}
+function $s_Ldiode_BaseModelR$class__zoom__Ldiode_BaseModelR__F1__Ldiode_ZoomModelR($$this, get) {
+  var jsx$1 = $$this.root__Ldiode_ModelR();
+  var g = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer) {
+    return (function(model$2) {
+      return arg$outer.getF__O__O(model$2)
+    })
+  })($$this));
+  return new $c_Ldiode_ZoomModelR().init___Ldiode_ModelR__F1(jsx$1, $s_s_Function1$class__compose__F1__F1__F1(get, g))
+}
+function $s_Ldiode_BaseModelR$class__value__Ldiode_BaseModelR__O($$this) {
+  return $$this.getF__O__O($$this.root__Ldiode_ModelR().value__O())
+}
+function $s_Ldiode_BaseModelRW$class__updated__Ldiode_BaseModelRW__O__O($$this, newValue) {
+  return $$this.setF__O__O__O($$this.root__Ldiode_ModelR().value__O(), newValue)
 }
 function $s_Ldiode_Circuit$class__diode$Circuit$$process__Ldiode_Circuit__O__Ldiode_ActionResult($$this, action) {
   return $as_Ldiode_ActionResult($$this.actionHandler$1.orElse__s_PartialFunction__s_PartialFunction($$this.diode$Circuit$$baseHandler$1).apply__O__O(action))
@@ -1294,16 +1310,24 @@ function $s_Ldiode_Circuit$class__dispatchBase__Ldiode_Circuit__O__V($$this, act
         var x2 = $as_Ldiode_ActionResult$ModelUpdate(x1);
         var newModel = x2.newValue$1;
         $s_Ldiode_Circuit$class__update__p0__Ldiode_Circuit__O__V($$this, newModel)
-      } else if ($is_Ldiode_ActionResult$ModelUpdateEffect(x1)) {
-        var x3 = $as_Ldiode_ActionResult$ModelUpdateEffect(x1);
-        var newModel$2 = x3.newValue__O();
+      } else if ($is_Ldiode_ActionResult$EffectOnly(x1)) {
+        var x3 = $as_Ldiode_ActionResult$EffectOnly(x1);
         var effects = x3.effects__Ldiode_Effect();
-        $s_Ldiode_Circuit$class__update__p0__Ldiode_Circuit__O__V($$this, newModel$2);
         effects.run__F1__s_concurrent_Future(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer) {
           return (function(action$2) {
             $s_Ldiode_Circuit$class__dispatch__Ldiode_Circuit__O__V(arg$outer, action$2)
           })
-        })($$this)))
+        })($$this))).recover__s_PartialFunction__s_concurrent_ExecutionContext__s_concurrent_Future(new $c_Ldiode_Circuit$$anonfun$dispatchBase$1().init___Ldiode_Circuit__O($$this, action), effects.ec__s_concurrent_ExecutionContext())
+      } else if ($is_Ldiode_ActionResult$ModelUpdateEffect(x1)) {
+        var x4 = $as_Ldiode_ActionResult$ModelUpdateEffect(x1);
+        var newModel$2 = x4.newValue__O();
+        var effects$2 = x4.effects__Ldiode_Effect();
+        $s_Ldiode_Circuit$class__update__p0__Ldiode_Circuit__O__V($$this, newModel$2);
+        effects$2.run__F1__s_concurrent_Future(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer$1) {
+          return (function(action$2$1) {
+            $s_Ldiode_Circuit$class__dispatch__Ldiode_Circuit__O__V(arg$outer$1, action$2$1)
+          })
+        })($$this))).recover__s_PartialFunction__s_concurrent_ExecutionContext__s_concurrent_Future(new $c_Ldiode_Circuit$$anonfun$dispatchBase$2().init___Ldiode_Circuit__O($$this, action), effects$2.ec__s_concurrent_ExecutionContext())
       } else {
         throw new $c_s_MatchError().init___O(x1)
       }
@@ -2592,6 +2616,13 @@ function $h_s_FallbackArrayBuilding() {
   /*<skip>*/
 }
 $h_s_FallbackArrayBuilding.prototype = $c_s_FallbackArrayBuilding.prototype;
+function $s_s_Function1$class__compose__F1__F1__F1($$this, g) {
+  return new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($$this$1, g$1) {
+    return (function(x$2) {
+      return $$this$1.apply__O__O(g$1.apply__O__O(x$2))
+    })
+  })($$this, g))
+}
 /** @constructor */
 function $c_s_LowPriorityImplicits() {
   $c_O.call(this)
@@ -5215,54 +5246,6 @@ function $m_sr_Statics$() {
   return $n_sr_Statics$
 }
 /** @constructor */
-function $c_Ldiode_RootModelR() {
-  $c_O.call(this);
-  this.get$1 = null
-}
-$c_Ldiode_RootModelR.prototype = new $h_O();
-$c_Ldiode_RootModelR.prototype.constructor = $c_Ldiode_RootModelR;
-/** @constructor */
-function $h_Ldiode_RootModelR() {
-  /*<skip>*/
-}
-$h_Ldiode_RootModelR.prototype = $c_Ldiode_RootModelR.prototype;
-$c_Ldiode_RootModelR.prototype.init___F0 = (function(get) {
-  this.get$1 = get;
-  return this
-});
-$c_Ldiode_RootModelR.prototype.value__O = (function() {
-  return this.get$1.apply__O()
-});
-/** @constructor */
-function $c_Ldiode_ZoomModelR() {
-  $c_O.call(this);
-  this.root$1 = null;
-  this.get$1 = null
-}
-$c_Ldiode_ZoomModelR.prototype = new $h_O();
-$c_Ldiode_ZoomModelR.prototype.constructor = $c_Ldiode_ZoomModelR;
-/** @constructor */
-function $h_Ldiode_ZoomModelR() {
-  /*<skip>*/
-}
-$h_Ldiode_ZoomModelR.prototype = $c_Ldiode_ZoomModelR.prototype;
-$c_Ldiode_ZoomModelR.prototype.init___Ldiode_ModelR__F1 = (function(root, get) {
-  this.root$1 = root;
-  this.get$1 = get;
-  return this
-});
-$c_Ldiode_ZoomModelR.prototype.value__O = (function() {
-  return this.get$1.apply__O__O(this.root$1.value__O())
-});
-var $d_Ldiode_ZoomModelR = new $TypeData().initClass({
-  Ldiode_ZoomModelR: 0
-}, false, "diode.ZoomModelR", {
-  Ldiode_ZoomModelR: 1,
-  O: 1,
-  Ldiode_ModelR: 1
-});
-$c_Ldiode_ZoomModelR.prototype.$classData = $d_Ldiode_ZoomModelR;
-/** @constructor */
 function $c_Lexample_AppCircuit$$anon$1() {
   $c_Ldiode_ActionHandler.call(this)
 }
@@ -5315,7 +5298,7 @@ $c_Lexample_SimpleApp$.prototype.init___ = (function() {
     return x$1.counter$1
   }));
   var this$2 = this$1.diode$Circuit$$modelRW$1;
-  this.counter$1 = new $c_Lexample_CounterView().init___Ldiode_ModelR__Ldiode_Dispatcher(new $c_Ldiode_ZoomModelR().init___Ldiode_ModelR__F1(this$2, get), $m_Lexample_AppCircuit$());
+  this.counter$1 = new $c_Lexample_CounterView().init___Ldiode_ModelR__Ldiode_Dispatcher($s_Ldiode_BaseModelR$class__zoom__Ldiode_BaseModelR__F1__Ldiode_ZoomModelR(this$2, get), $m_Lexample_AppCircuit$());
   return this
 });
 $c_Lexample_SimpleApp$.prototype.render__Lorg_scalajs_dom_raw_Element__Lorg_scalajs_dom_raw_Node = (function(root) {
@@ -6239,6 +6222,67 @@ var $d_sr_ObjectRef = new $TypeData().initClass({
   Ljava_io_Serializable: 1
 });
 $c_sr_ObjectRef.prototype.$classData = $d_sr_ObjectRef;
+/** @constructor */
+function $c_Ldiode_RootModelR() {
+  $c_O.call(this);
+  this.get$1 = null
+}
+$c_Ldiode_RootModelR.prototype = new $h_O();
+$c_Ldiode_RootModelR.prototype.constructor = $c_Ldiode_RootModelR;
+/** @constructor */
+function $h_Ldiode_RootModelR() {
+  /*<skip>*/
+}
+$h_Ldiode_RootModelR.prototype = $c_Ldiode_RootModelR.prototype;
+$c_Ldiode_RootModelR.prototype.init___F0 = (function(get) {
+  this.get$1 = get;
+  return this
+});
+$c_Ldiode_RootModelR.prototype.value__O = (function() {
+  return this.get$1.apply__O()
+});
+$c_Ldiode_RootModelR.prototype.getF__O__O = (function(model) {
+  return this.get$1.apply__O()
+});
+$c_Ldiode_RootModelR.prototype.root__Ldiode_ModelR = (function() {
+  return this
+});
+/** @constructor */
+function $c_Ldiode_ZoomModelR() {
+  $c_O.call(this);
+  this.root$1 = null;
+  this.get$1 = null
+}
+$c_Ldiode_ZoomModelR.prototype = new $h_O();
+$c_Ldiode_ZoomModelR.prototype.constructor = $c_Ldiode_ZoomModelR;
+/** @constructor */
+function $h_Ldiode_ZoomModelR() {
+  /*<skip>*/
+}
+$h_Ldiode_ZoomModelR.prototype = $c_Ldiode_ZoomModelR.prototype;
+$c_Ldiode_ZoomModelR.prototype.init___Ldiode_ModelR__F1 = (function(root, get) {
+  this.root$1 = root;
+  this.get$1 = get;
+  return this
+});
+$c_Ldiode_ZoomModelR.prototype.value__O = (function() {
+  return $s_Ldiode_BaseModelR$class__value__Ldiode_BaseModelR__O(this)
+});
+$c_Ldiode_ZoomModelR.prototype.getF__O__O = (function(model) {
+  return this.get$1.apply__O__O(model)
+});
+$c_Ldiode_ZoomModelR.prototype.root__Ldiode_ModelR = (function() {
+  return this.root$1
+});
+var $d_Ldiode_ZoomModelR = new $TypeData().initClass({
+  Ldiode_ZoomModelR: 0
+}, false, "diode.ZoomModelR", {
+  Ldiode_ZoomModelR: 1,
+  O: 1,
+  Ldiode_BaseModelR: 1,
+  Ldiode_ModelR: 1
+});
+$c_Ldiode_ZoomModelR.prototype.$classData = $d_Ldiode_ZoomModelR;
 /** @constructor */
 function $c_Lexample_AppCircuit$() {
   $c_O.call(this);
@@ -8772,71 +8816,6 @@ var $d_sr_Nothing$ = new $TypeData().initClass({
   Ljava_io_Serializable: 1
 });
 /** @constructor */
-function $c_Ldiode_RootModelRW() {
-  $c_Ldiode_RootModelR.call(this)
-}
-$c_Ldiode_RootModelRW.prototype = new $h_Ldiode_RootModelR();
-$c_Ldiode_RootModelRW.prototype.constructor = $c_Ldiode_RootModelRW;
-/** @constructor */
-function $h_Ldiode_RootModelRW() {
-  /*<skip>*/
-}
-$h_Ldiode_RootModelRW.prototype = $c_Ldiode_RootModelRW.prototype;
-$c_Ldiode_RootModelRW.prototype.zoomRW__F1__F2__Ldiode_ZoomModelRW = (function(get, set) {
-  return new $c_Ldiode_ZoomModelRW().init___Ldiode_RootModelR__F1__F2(this, get, new $c_sjsr_AnonFunction2().init___sjs_js_Function2((function(arg$outer, set$1) {
-    return (function(s$2, u$2) {
-      return set$1.apply__O__O__O(arg$outer.value__O(), u$2)
-    })
-  })(this, set)))
-});
-$c_Ldiode_RootModelRW.prototype.updated__O__O = (function(newValue) {
-  return newValue
-});
-var $d_Ldiode_RootModelRW = new $TypeData().initClass({
-  Ldiode_RootModelRW: 0
-}, false, "diode.RootModelRW", {
-  Ldiode_RootModelRW: 1,
-  Ldiode_RootModelR: 1,
-  O: 1,
-  Ldiode_ModelR: 1,
-  Ldiode_ModelRW: 1
-});
-$c_Ldiode_RootModelRW.prototype.$classData = $d_Ldiode_RootModelRW;
-/** @constructor */
-function $c_Ldiode_ZoomModelRW() {
-  $c_Ldiode_ZoomModelR.call(this);
-  this.root$2 = null;
-  this.diode$ZoomModelRW$$get$f = null;
-  this.diode$ZoomModelRW$$set$f = null
-}
-$c_Ldiode_ZoomModelRW.prototype = new $h_Ldiode_ZoomModelR();
-$c_Ldiode_ZoomModelRW.prototype.constructor = $c_Ldiode_ZoomModelRW;
-/** @constructor */
-function $h_Ldiode_ZoomModelRW() {
-  /*<skip>*/
-}
-$h_Ldiode_ZoomModelRW.prototype = $c_Ldiode_ZoomModelRW.prototype;
-$c_Ldiode_ZoomModelRW.prototype.init___Ldiode_RootModelR__F1__F2 = (function(root, get, set) {
-  this.root$2 = root;
-  this.diode$ZoomModelRW$$get$f = get;
-  this.diode$ZoomModelRW$$set$f = set;
-  $c_Ldiode_ZoomModelR.prototype.init___Ldiode_ModelR__F1.call(this, root, get);
-  return this
-});
-$c_Ldiode_ZoomModelRW.prototype.updated__O__O = (function(newValue) {
-  return this.diode$ZoomModelRW$$set$f.apply__O__O__O(this.root$2.value__O(), newValue)
-});
-var $d_Ldiode_ZoomModelRW = new $TypeData().initClass({
-  Ldiode_ZoomModelRW: 0
-}, false, "diode.ZoomModelRW", {
-  Ldiode_ZoomModelRW: 1,
-  Ldiode_ZoomModelR: 1,
-  O: 1,
-  Ldiode_ModelR: 1,
-  Ldiode_ModelRW: 1
-});
-$c_Ldiode_ZoomModelRW.prototype.$classData = $d_Ldiode_ZoomModelRW;
-/** @constructor */
 function $c_Ljava_io_FilterOutputStream() {
   $c_Ljava_io_OutputStream.call(this);
   this.out$2 = null
@@ -9607,7 +9586,9 @@ $c_Ldiode_Circuit$$anonfun$buildProcessChain$2.prototype.init___Ldiode_Circuit =
 $c_Ldiode_Circuit$$anonfun$buildProcessChain$2.prototype.apply__F1__Ldiode_ActionProcessor__F1 = (function(next, processor) {
   return new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer, next$1, processor$1) {
     return (function(action$2) {
-      return processor$1.process__Ldiode_Dispatcher__O__F1__Ldiode_ActionResult(arg$outer.$$outer$2, action$2, next$1)
+      var jsx$1 = arg$outer.$$outer$2;
+      var this$1 = arg$outer.$$outer$2;
+      return processor$1.process__Ldiode_Dispatcher__O__F1__O__Ldiode_ActionResult(jsx$1, action$2, next$1, this$1.model$1)
     })
   })(this, next, processor))
 });
@@ -11721,6 +11702,18 @@ var $d_sr_ScalaRunTime$$anon$1 = new $TypeData().initClass({
   sc_GenTraversableOnce: 1
 });
 $c_sr_ScalaRunTime$$anon$1.prototype.$classData = $d_sr_ScalaRunTime$$anon$1;
+function $is_Ldiode_ActionResult$EffectOnly(obj) {
+  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Ldiode_ActionResult$EffectOnly)))
+}
+function $as_Ldiode_ActionResult$EffectOnly(obj) {
+  return (($is_Ldiode_ActionResult$EffectOnly(obj) || (obj === null)) ? obj : $throwClassCastException(obj, "diode.ActionResult$EffectOnly"))
+}
+function $isArrayOf_Ldiode_ActionResult$EffectOnly(obj, depth) {
+  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Ldiode_ActionResult$EffectOnly)))
+}
+function $asArrayOf_Ldiode_ActionResult$EffectOnly(obj, depth) {
+  return (($isArrayOf_Ldiode_ActionResult$EffectOnly(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Ldiode.ActionResult$EffectOnly;", depth))
+}
 /** @constructor */
 function $c_Ldiode_ActionResult$NoChange$() {
   $c_O.call(this)
@@ -11833,6 +11826,167 @@ var $d_Ldiode_Circuit$$anonfun$1 = new $TypeData().initClass({
   Ljava_io_Serializable: 1
 });
 $c_Ldiode_Circuit$$anonfun$1.prototype.$classData = $d_Ldiode_Circuit$$anonfun$1;
+/** @constructor */
+function $c_Ldiode_Circuit$$anonfun$dispatchBase$1() {
+  $c_sr_AbstractPartialFunction.call(this);
+  this.$$outer$2 = null;
+  this.action$1$2 = null
+}
+$c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype = new $h_sr_AbstractPartialFunction();
+$c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype.constructor = $c_Ldiode_Circuit$$anonfun$dispatchBase$1;
+/** @constructor */
+function $h_Ldiode_Circuit$$anonfun$dispatchBase$1() {
+  /*<skip>*/
+}
+$h_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype = $c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype;
+$c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype.isDefinedAt__jl_Throwable__Z = (function(x2) {
+  return (x2 !== null)
+});
+$c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype.applyOrElse__jl_Throwable__F1__O = (function(x2, $default) {
+  return ((x2 !== null) ? (new $c_s_StringContext().init___sc_Seq(new $c_sjs_js_WrappedArray().init___sjs_js_Array(["Error in processing effects for action ", ": ", ""])).s__sc_Seq__T(new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.action$1$2, x2])), (void 0)) : $default.apply__O__O(x2))
+});
+$c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype.isDefinedAt__O__Z = (function(x) {
+  return this.isDefinedAt__jl_Throwable__Z($as_jl_Throwable(x))
+});
+$c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype.init___Ldiode_Circuit__O = (function($$outer, action$1) {
+  if (($$outer === null)) {
+    throw $m_sjsr_package$().unwrapJavaScriptException__jl_Throwable__O(null)
+  } else {
+    this.$$outer$2 = $$outer
+  };
+  this.action$1$2 = action$1;
+  return this
+});
+$c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype.applyOrElse__O__F1__O = (function(x, $default) {
+  return this.applyOrElse__jl_Throwable__F1__O($as_jl_Throwable(x), $default)
+});
+var $d_Ldiode_Circuit$$anonfun$dispatchBase$1 = new $TypeData().initClass({
+  Ldiode_Circuit$$anonfun$dispatchBase$1: 0
+}, false, "diode.Circuit$$anonfun$dispatchBase$1", {
+  Ldiode_Circuit$$anonfun$dispatchBase$1: 1,
+  sr_AbstractPartialFunction: 1,
+  O: 1,
+  F1: 1,
+  s_PartialFunction: 1,
+  s_Serializable: 1,
+  Ljava_io_Serializable: 1
+});
+$c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype.$classData = $d_Ldiode_Circuit$$anonfun$dispatchBase$1;
+/** @constructor */
+function $c_Ldiode_Circuit$$anonfun$dispatchBase$2() {
+  $c_sr_AbstractPartialFunction.call(this);
+  this.$$outer$2 = null;
+  this.action$1$2 = null
+}
+$c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype = new $h_sr_AbstractPartialFunction();
+$c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype.constructor = $c_Ldiode_Circuit$$anonfun$dispatchBase$2;
+/** @constructor */
+function $h_Ldiode_Circuit$$anonfun$dispatchBase$2() {
+  /*<skip>*/
+}
+$h_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype = $c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype;
+$c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype.isDefinedAt__jl_Throwable__Z = (function(x3) {
+  return (x3 !== null)
+});
+$c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype.applyOrElse__jl_Throwable__F1__O = (function(x3, $default) {
+  return ((x3 !== null) ? (new $c_s_StringContext().init___sc_Seq(new $c_sjs_js_WrappedArray().init___sjs_js_Array(["Error in processing effects for action ", ": ", ""])).s__sc_Seq__T(new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.action$1$2, x3])), (void 0)) : $default.apply__O__O(x3))
+});
+$c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype.isDefinedAt__O__Z = (function(x) {
+  return this.isDefinedAt__jl_Throwable__Z($as_jl_Throwable(x))
+});
+$c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype.init___Ldiode_Circuit__O = (function($$outer, action$1) {
+  if (($$outer === null)) {
+    throw $m_sjsr_package$().unwrapJavaScriptException__jl_Throwable__O(null)
+  } else {
+    this.$$outer$2 = $$outer
+  };
+  this.action$1$2 = action$1;
+  return this
+});
+$c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype.applyOrElse__O__F1__O = (function(x, $default) {
+  return this.applyOrElse__jl_Throwable__F1__O($as_jl_Throwable(x), $default)
+});
+var $d_Ldiode_Circuit$$anonfun$dispatchBase$2 = new $TypeData().initClass({
+  Ldiode_Circuit$$anonfun$dispatchBase$2: 0
+}, false, "diode.Circuit$$anonfun$dispatchBase$2", {
+  Ldiode_Circuit$$anonfun$dispatchBase$2: 1,
+  sr_AbstractPartialFunction: 1,
+  O: 1,
+  F1: 1,
+  s_PartialFunction: 1,
+  s_Serializable: 1,
+  Ljava_io_Serializable: 1
+});
+$c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype.$classData = $d_Ldiode_Circuit$$anonfun$dispatchBase$2;
+/** @constructor */
+function $c_Ldiode_RootModelRW() {
+  $c_Ldiode_RootModelR.call(this)
+}
+$c_Ldiode_RootModelRW.prototype = new $h_Ldiode_RootModelR();
+$c_Ldiode_RootModelRW.prototype.constructor = $c_Ldiode_RootModelRW;
+/** @constructor */
+function $h_Ldiode_RootModelRW() {
+  /*<skip>*/
+}
+$h_Ldiode_RootModelRW.prototype = $c_Ldiode_RootModelRW.prototype;
+$c_Ldiode_RootModelRW.prototype.init___F0 = (function(get) {
+  $c_Ldiode_RootModelR.prototype.init___F0.call(this, get);
+  return this
+});
+$c_Ldiode_RootModelRW.prototype.zoomRW__F1__F2__Ldiode_ZoomModelRW = (function(get, set) {
+  return new $c_Ldiode_ZoomModelRW().init___Ldiode_ModelR__F1__F2(this, get, new $c_sjsr_AnonFunction2().init___sjs_js_Function2((function(arg$outer, set$1) {
+    return (function(s$2, u$2) {
+      return set$1.apply__O__O__O(arg$outer.value__O(), u$2)
+    })
+  })(this, set)))
+});
+$c_Ldiode_RootModelRW.prototype.setF__O__O__O = (function(model, value) {
+  return value
+});
+var $d_Ldiode_RootModelRW = new $TypeData().initClass({
+  Ldiode_RootModelRW: 0
+}, false, "diode.RootModelRW", {
+  Ldiode_RootModelRW: 1,
+  Ldiode_RootModelR: 1,
+  O: 1,
+  Ldiode_BaseModelR: 1,
+  Ldiode_ModelR: 1,
+  Ldiode_BaseModelRW: 1,
+  Ldiode_ModelRW: 1
+});
+$c_Ldiode_RootModelRW.prototype.$classData = $d_Ldiode_RootModelRW;
+/** @constructor */
+function $c_Ldiode_ZoomModelRW() {
+  $c_Ldiode_ZoomModelR.call(this);
+  this.set$2 = null
+}
+$c_Ldiode_ZoomModelRW.prototype = new $h_Ldiode_ZoomModelR();
+$c_Ldiode_ZoomModelRW.prototype.constructor = $c_Ldiode_ZoomModelRW;
+/** @constructor */
+function $h_Ldiode_ZoomModelRW() {
+  /*<skip>*/
+}
+$h_Ldiode_ZoomModelRW.prototype = $c_Ldiode_ZoomModelRW.prototype;
+$c_Ldiode_ZoomModelRW.prototype.setF__O__O__O = (function(model, value) {
+  return this.set$2.apply__O__O__O(model, value)
+});
+$c_Ldiode_ZoomModelRW.prototype.init___Ldiode_ModelR__F1__F2 = (function(root, get, set) {
+  this.set$2 = set;
+  $c_Ldiode_ZoomModelR.prototype.init___Ldiode_ModelR__F1.call(this, root, get);
+  return this
+});
+var $d_Ldiode_ZoomModelRW = new $TypeData().initClass({
+  Ldiode_ZoomModelRW: 0
+}, false, "diode.ZoomModelRW", {
+  Ldiode_ZoomModelRW: 1,
+  Ldiode_ZoomModelR: 1,
+  O: 1,
+  Ldiode_BaseModelR: 1,
+  Ldiode_ModelR: 1,
+  Ldiode_BaseModelRW: 1,
+  Ldiode_ModelRW: 1
+});
+$c_Ldiode_ZoomModelRW.prototype.$classData = $d_Ldiode_ZoomModelRW;
 /** @constructor */
 function $c_Lexample_AppCircuit$$anon$1$$anonfun$handle$1() {
   $c_sr_AbstractPartialFunction.call(this);

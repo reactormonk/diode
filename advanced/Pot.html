@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="2.1" data-chapter-title="Async Model Data" data-filepath="advanced/Pot.md" data-basepath=".." data-revision="Fri Dec 04 2015 20:17:49 GMT+0200 (FLE Standard Time)">
+    <div class="book" data-level="2.1" data-chapter-title="Async Model Data" data-filepath="advanced/Pot.md" data-basepath=".." data-revision="Wed Dec 30 2015 22:50:34 GMT+0200 (FLE Standard Time)">
     
 
 <div class="book-summary">
@@ -218,14 +218,29 @@
             
         </li>
     
-        <li class="chapter " data-level="2.3" data-path="advanced/ActionProcessors.html">
+        <li class="chapter " data-level="2.3" data-path="advanced/PotCollection.html">
+            
+                
+                    <a href="../advanced/PotCollection.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.3.</b>
+                        
+                        Async Virtual Collections
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="advanced/ActionProcessors.html">
             
                 
                     <a href="../advanced/ActionProcessors.html">
                 
                         <i class="fa fa-check"></i>
                         
-                            <b>2.3.</b>
+                            <b>2.4.</b>
                         
                         Action Processors
                     </a>
@@ -308,7 +323,7 @@ control over errors, but if you consider refreshing old data and getting an erro
 operation has been running and notifying the user when it has been delayed for too long. Clearly the existing data containers are not enough for this.</p>
 <h2 id="potential-data">Potential Data</h2>
 <p><img src="../images/pot-states.png" style="float: right; padding: 10px" ;="">
-A <code>Pot[+A]</code> represents <em>potential</em> data that may exist in six different states as seen in the picture on the right. <code>Pot</code> provides you with the same interface as
+A <code>Pot[+A]</code> represents <em>potential</em> data that may exist in seven different states as seen in the picture on the right. <code>Pot</code> provides you with the same interface as
 <code>Option</code> or <code>Try</code>, making it very easy to use in your existing application code. Things like <em>for comprehension</em>, <code>getOrElse</code> or even <code>recover</code> are supported.
 Like <code>Option</code>, <code>Pot</code> is immutable and you have to create a new <code>Pot</code> when the state or content changes.</p>
 <p><code>Pot</code> usually starts as an <code>Empty</code> (option <code>None</code>) or <code>Ready</code> (option <code>Some</code>), depending on whether you have the data available or not. You can use the <code>empty</code>
@@ -319,7 +334,7 @@ method to create a correctly typed <code>Empty</code>.</p>
 <pre><code class="lang-scala">myData <span class="token operator">=</span> myData<span class="token punctuation">.</span>pending<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// myData is now Pending</span>
 </code></pre>
 <p>Assuming you get a successful response from the server, you can change the state to <code>Ready</code>.</p>
-<pre><code class="lang-scala">myData <span class="token operator">=</span> myValue<span class="token punctuation">.</span>ready<span class="token punctuation">(</span>data<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// myData is now Ready(data)</span>
+<pre><code class="lang-scala">myData <span class="token operator">=</span> myData<span class="token punctuation">.</span>ready<span class="token punctuation">(</span>data<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// myData is now Ready(data)</span>
 </code></pre>
 <p>In case something went wrong, you can store the exception in the <code>Failed</code> state.</p>
 <pre><code class="lang-scala">myData <span class="token operator">=</span> myData<span class="token punctuation">.</span>fail<span class="token punctuation">(</span>exception<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// myData is now Failed(exception)</span>
@@ -332,6 +347,9 @@ used while new data is fetched.</p>
 old data.</p>
 <pre><code class="lang-scala">myData <span class="token operator">=</span> myData<span class="token punctuation">.</span>fail<span class="token punctuation">(</span>exception<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// myData is now FailedStale(data, exception)</span>
 </code></pre>
+<p>If the data you are trying to fetch does not exist, you can use <code>Unavailable</code> to indicate that.</p>
+<pre><code class="lang-scala">myData <span class="token operator">=</span> myData<span class="token punctuation">.</span>unavailable<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// myData is now Unavailable</span>
+</code></pre>
 <h3 id="usage">Usage</h3>
 <p><code>Pot</code> exposes its state via following functions.</p>
 <pre><code class="lang-scala"><span class="token keyword">def</span> isEmpty<span class="token operator">:</span> <span class="token builtin">Boolean</span>
@@ -340,18 +358,19 @@ old data.</p>
 <span class="token keyword">def</span> isStale<span class="token operator">:</span> <span class="token builtin">Boolean</span>
 <span class="token keyword">def</span> isFailed<span class="token operator">:</span> <span class="token builtin">Boolean</span>
 <span class="token keyword">def</span> isReady<span class="token operator">:</span> <span class="token builtin">Boolean</span>
+<span class="token keyword">def</span> isUnavailable<span class="token operator">:</span> <span class="token builtin">Boolean</span>
 <span class="token keyword">def</span> state<span class="token operator">:</span> PotState
 </code></pre>
-<p>You can query specific state via <code>isX</code> functions, or use <code>state</code> for matching. Note that <code>isEmpty</code> means there is no data in the <code>Pot</code>, so states <code>Pending</code> and
-<code>Failed</code>, in addition to <code>Empty</code>, all return <code>true</code>.</p>
-<p>Otherwise a <code>Pot</code> works like an <code>Option</code> (<code>Empty</code>, <code>Pending</code> and <code>Failed</code> work like <code>None</code>).</p>
+<p>You can query specific state via <code>isX</code> functions, or use <code>state</code> for matching. Note that <code>isEmpty</code> means there is no data in the <code>Pot</code>, so states <code>Unavailable</code>,
+<code>Pending</code> and <code>Failed</code>, in addition to <code>Empty</code>, all return <code>true</code>.</p>
+<p>Otherwise a <code>Pot</code> works like an <code>Option</code> (<code>Empty</code>, <code>Unavailable</code>, <code>Pending</code> and <code>Failed</code> work like <code>None</code>).</p>
 <h3 id="retries">Retries</h3>
 <p>A common pattern with async data is to retry failed loads a few times. <code>Pot</code> supports this pattern by providing a retry policy (<code>retryPolicy</code>) and some state
 management to deal with retries. A typical case is to check for retry after <code>Pot</code> goes into failed state and then retry the operation like in the example below:</p>
 <pre><code class="lang-scala"><span class="token keyword">val</span> value<span class="token operator">:</span> Pot<span class="token punctuation">[</span>A<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
 
 <span class="token keyword">case</span> PotEmpty <span class="token keyword">=&gt;</span>
-  updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>pending<span class="token punctuation">(</span>retries<span class="token punctuation">)</span><span class="token punctuation">,</span> updateEffect<span class="token punctuation">)</span>
+  updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>pending<span class="token punctuation">(</span>retryPolicy<span class="token punctuation">)</span><span class="token punctuation">,</span> updateEffect<span class="token punctuation">)</span>
 <span class="token keyword">case</span> PotFailed <span class="token keyword">=&gt;</span>
   value<span class="token punctuation">.</span>retryPolicy<span class="token punctuation">.</span>retry<span class="token punctuation">(</span>action<span class="token punctuation">.</span>value<span class="token punctuation">,</span> updateEffect<span class="token punctuation">)</span> <span class="token keyword">match</span> <span class="token punctuation">{</span>
     <span class="token keyword">case</span> Right<span class="token punctuation">(</span><span class="token punctuation">(</span>nextPolicy<span class="token punctuation">,</span> retryEffect<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
@@ -362,8 +381,8 @@ management to deal with retries. A typical case is to check for retry after <cod
 </code></pre>
 <p>The <code>Pot.retry</code> function sets the <code>Pot</code> into <code>Pending</code> (or <code>PendingStale</code>) state and updates <code>retryPolicy</code>. Common retry policies <code>Immediate</code> and <code>Backoff</code> are
 available in the <code>Retry</code> object, but feel free to roll your own.</p>
-<h3 id="waiting-time">Waiting Time</h3>
-<p>The pending states of <code>Pot</code> store a time value when created. You can access this through <code>startTime</code>, or you can directly get the duration of the operation
+<h3 id="pending-time">Pending Time</h3>
+<p>The pending states of <code>Pot</code> store a time stamp when created. You can access this through <code>startTime</code>, or you can directly get the duration of the operation
 with <code>duration(currentTime)</code>. This is useful in an user interface, where you&apos;ll want to show an indicator if the operation is taking too long. If
 an operation fails and you retry it, the <code>startTime</code> will remain the same, giving you the total duration of the retried operations.</p>
 
