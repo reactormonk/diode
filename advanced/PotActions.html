@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="2.2" data-chapter-title="Stateful Actions" data-filepath="advanced/PotActions.md" data-basepath=".." data-revision="Wed Dec 30 2015 22:50:34 GMT+0200 (FLE Standard Time)">
+    <div class="book" data-level="2.2" data-chapter-title="Stateful Actions" data-filepath="advanced/PotActions.md" data-basepath=".." data-revision="Sun Jan 17 2016 23:42:00 GMT+0200 (FLE Standard Time)">
     
 
 <div class="book-summary">
@@ -328,8 +328,8 @@ loading process.</p>
 <h2 id="potaction"><code>PotAction</code></h2>
 <p>The <code>PotAction</code> trait simplifies creation of stateful actions for <code>Pot</code> data. To use it, simply define a case class extending <code>PotAction</code> and define the <code>next</code>
 function to build a new instance of your action.</p>
-<pre><code class="lang-scala"><span class="token keyword">case</span> <span class="token keyword">class</span> UpdateTodos<span class="token punctuation">(</span>value<span class="token operator">:</span> Pot<span class="token punctuation">[</span>Todos<span class="token punctuation">]</span> <span class="token operator">=</span> Empty<span class="token punctuation">)</span> <span class="token keyword">extends</span> PotAction<span class="token punctuation">[</span>Todos<span class="token punctuation">,</span> UpdateTodos<span class="token punctuation">]</span> <span class="token punctuation">{</span>
-  <span class="token keyword">def</span> next<span class="token punctuation">(</span>newValue<span class="token operator">:</span> Pot<span class="token punctuation">[</span>Todos<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">=</span> UpdateTodos<span class="token punctuation">(</span>newValue<span class="token punctuation">)</span>
+<pre><code class="lang-scala"><span class="token keyword">case</span> <span class="token keyword">class</span> UpdateTodos<span class="token punctuation">(</span>result<span class="token operator">:</span> Pot<span class="token punctuation">[</span>Todos<span class="token punctuation">]</span> <span class="token operator">=</span> Empty<span class="token punctuation">)</span> <span class="token keyword">extends</span> PotAction<span class="token punctuation">[</span>Todos<span class="token punctuation">,</span> UpdateTodos<span class="token punctuation">]</span> <span class="token punctuation">{</span>
+  <span class="token keyword">def</span> next<span class="token punctuation">(</span>newResult<span class="token operator">:</span> Pot<span class="token punctuation">[</span>Todos<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">=</span> UpdateTodos<span class="token punctuation">(</span>newResult<span class="token punctuation">)</span>
 <span class="token punctuation">}</span>
 </code></pre>
 <p>Now you can write an action handler managing the different states of your <code>UpdateTodos</code>.</p>
@@ -338,7 +338,7 @@ function to build a new instance of your action.</p>
     <span class="token keyword">val</span> updateEffect <span class="token operator">=</span> action<span class="token punctuation">.</span>effect<span class="token punctuation">(</span>loadTodos<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">(</span>todos <span class="token keyword">=&gt;</span> Todos<span class="token punctuation">(</span>todos<span class="token punctuation">)</span><span class="token punctuation">)</span>
     action<span class="token punctuation">.</span>handle <span class="token punctuation">{</span>
       <span class="token keyword">case</span> PotEmpty <span class="token keyword">=&gt;</span>
-        updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>pending<span class="token punctuation">(</span>retryPolicy<span class="token punctuation">)</span><span class="token punctuation">,</span> updateEffect<span class="token punctuation">)</span>
+        updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>pending<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> updateEffect<span class="token punctuation">)</span>
       <span class="token keyword">case</span> PotPending <span class="token keyword">=&gt;</span>
         noChange
       <span class="token keyword">case</span> PotReady <span class="token keyword">=&gt;</span>
@@ -346,12 +346,7 @@ function to build a new instance of your action.</p>
       <span class="token keyword">case</span> PotUnavailable <span class="token keyword">=&gt;</span>
         updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>unavailable<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
       <span class="token keyword">case</span> PotFailed <span class="token keyword">=&gt;</span>
-        value<span class="token punctuation">.</span>retryPolicy<span class="token punctuation">.</span>retry<span class="token punctuation">(</span>action<span class="token punctuation">.</span>value<span class="token punctuation">,</span> updateEffect<span class="token punctuation">)</span> <span class="token keyword">match</span> <span class="token punctuation">{</span>
-          <span class="token keyword">case</span> Right<span class="token punctuation">(</span><span class="token punctuation">(</span>nextPolicy<span class="token punctuation">,</span> retryEffect<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
-            updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>retry<span class="token punctuation">(</span>nextPolicy<span class="token punctuation">)</span><span class="token punctuation">,</span> retryEffect<span class="token punctuation">)</span>
-          <span class="token keyword">case</span> Left<span class="token punctuation">(</span>ex<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
-            updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>fail<span class="token punctuation">(</span>ex<span class="token punctuation">)</span><span class="token punctuation">)</span>
-        <span class="token punctuation">}</span>
+        updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>fail<span class="token punctuation">(</span>ex<span class="token punctuation">)</span><span class="token punctuation">)</span>
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
@@ -361,23 +356,22 @@ function to transform the result of the future into the correct type for our act
 <h3 id="common-handlers">Common Handlers</h3>
 <p>The state management of your <code>PotAction</code>s is typically identical, so it makes sense to extract it into a common handler. <code>PotAction</code> supports handling the
 action via an external handler function through <code>handleWith</code>.</p>
-<pre><code class="lang-scala"><span class="token keyword">import</span> scala<span class="token punctuation">.</span>concurrent<span class="token punctuation">.</span>duration<span class="token punctuation">.</span>_
+<pre><code class="lang-scala"><span class="token keyword">val</span> updateEffect <span class="token operator">=</span> action<span class="token punctuation">.</span>effect<span class="token punctuation">(</span>loadTodos<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">(</span>todos <span class="token keyword">=&gt;</span> Todos<span class="token punctuation">(</span>todos<span class="token punctuation">)</span><span class="token punctuation">)</span>
 
-<span class="token keyword">val</span> updateEffect <span class="token operator">=</span> action<span class="token punctuation">.</span>effect<span class="token punctuation">(</span>loadTodos<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">(</span>todos <span class="token keyword">=&gt;</span> Todos<span class="token punctuation">(</span>todos<span class="token punctuation">)</span><span class="token punctuation">)</span>
 <span class="token keyword">override</span> <span class="token keyword">def</span> handle <span class="token operator">=</span> <span class="token punctuation">{</span>
   <span class="token keyword">case</span> action<span class="token operator">:</span> UpdateTodos <span class="token keyword">=&gt;</span>
-    action<span class="token punctuation">.</span>handleWith<span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> updateEffect<span class="token punctuation">)</span><span class="token punctuation">(</span>PotAction<span class="token punctuation">.</span>handler<span class="token punctuation">(</span>Retry<span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">100</span><span class="token punctuation">.</span>millis<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    action<span class="token punctuation">.</span>handleWith<span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> updateEffect<span class="token punctuation">)</span><span class="token punctuation">(</span>PotAction<span class="token punctuation">.</span>handler<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<p>Here we use a predefined handler from the <code>PotAction</code> object, which supports retries and periodic notification of pending actions. Note how the <code>updateEffect</code>
-definition can be moved outside the handling function because it&apos;s immutable.</p>
+<p>Here we use a predefined handler from the <code>PotAction</code> object. Note how the <code>updateEffect</code> definition can be moved outside the handling function because it&apos;s
+immutable.</p>
 <h3 id="notifications-while-pending">Notifications while Pending</h3>
 <p>If a <code>Pot</code> stays in pending state for too long, you often want to notify the user by showing something in the user interface. But by default the model is not
 updated while an operation is running, so we need to do that ourselves. Easiest way to do that is to use a delayed effect that refreshes model state at a
 given interval. You can create a second, delayed effect with <code>Effect.action(action.pending).after(someTime)</code> and combine it with the normal update effect using
 the <code>+</code> operator.</p>
 <pre><code class="lang-scala"><span class="token keyword">case</span> PotEmpty <span class="token keyword">=&gt;</span>
-  updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>pending<span class="token punctuation">(</span>retryPolicy<span class="token punctuation">)</span><span class="token punctuation">,</span> updateEffect <span class="token operator">+</span> Effect<span class="token punctuation">.</span>action<span class="token punctuation">(</span>action<span class="token punctuation">.</span>pending<span class="token punctuation">)</span><span class="token punctuation">.</span>after<span class="token punctuation">(</span>someTime<span class="token punctuation">)</span><span class="token punctuation">)</span>
+  updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>pending<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> updateEffect <span class="token operator">+</span> Effect<span class="token punctuation">.</span>action<span class="token punctuation">(</span>action<span class="token punctuation">.</span>pending<span class="token punctuation">)</span><span class="token punctuation">.</span>after<span class="token punctuation">(</span>someTime<span class="token punctuation">)</span><span class="token punctuation">)</span>
 </code></pre>
 <p>Now after <code>someTime</code> the effect completes and dispatches the <code>action.pending</code> action which is handled below:</p>
 <pre><code class="lang-scala"><span class="token keyword">case</span> PotPending <span class="token keyword">=&gt;</span>
@@ -389,11 +383,48 @@ the <code>+</code> operator.</p>
 <p>First we check if the <code>Pot</code> is still pending (it hasn&apos;t transitioned into failed or ready state in the meanwhile) and if so, we &quot;update&quot; the value to pending
 state (which makes a copy of the <code>Pot</code>, creating a new reference, triggering an update in the view) and resubmit a delayed effect. This continues while the
 <code>PotAction</code> is in pending state, updating the model at a steady interval.</p>
+<p>The common handlers also support sending updates while pending. You just need to provide the interval time to the handler</p>
+<pre><code class="lang-scala"><span class="token keyword">import</span> scala<span class="token punctuation">.</span>concurrent<span class="token punctuation">.</span>duration<span class="token punctuation">.</span>_
+
+<span class="token keyword">override</span> <span class="token keyword">def</span> handle <span class="token operator">=</span> <span class="token punctuation">{</span>
+  <span class="token keyword">case</span> action<span class="token operator">:</span> UpdateTodos <span class="token keyword">=&gt;</span>
+    action<span class="token punctuation">.</span>handleWith<span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> updateEffect<span class="token punctuation">)</span><span class="token punctuation">(</span>PotAction<span class="token punctuation">.</span>handler<span class="token punctuation">(</span><span class="token number">400</span><span class="token punctuation">.</span>milliseconds<span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+</code></pre>
 <p>In the view you can check how long the <code>Pot</code> has been pending by calling <code>duration()</code> and act accordingly.</p>
 <pre><code class="lang-scala"><span class="token keyword">if</span> <span class="token punctuation">(</span>pot<span class="token punctuation">.</span>isPending<span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">val</span> duration <span class="token operator">=</span> pot<span class="token punctuation">.</span>asInstanceOf<span class="token punctuation">[</span>PendingBase<span class="token punctuation">]</span><span class="token punctuation">.</span>duration<span class="token punctuation">(</span><span class="token punctuation">)</span>
   <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
 </code></pre>
+<h2 id="asyncaction"><code>AsyncAction</code></h2>
+<p>For actions not involving <code>Pot</code> data you can use <code>AsyncAction</code>. It provides the same functionality but the state is separated from the value and the type of
+value is <code>Try[A]</code> to indicate success/failure.</p>
+<pre><code class="lang-scala"><span class="token keyword">case</span> <span class="token keyword">class</span> UpdateTodos<span class="token punctuation">(</span>
+  state<span class="token operator">:</span> PotState <span class="token operator">=</span> PotState<span class="token punctuation">.</span>Empty<span class="token punctuation">,</span> 
+  result<span class="token operator">:</span> Try<span class="token punctuation">[</span>Todos<span class="token punctuation">]</span> <span class="token operator">=</span> Failure<span class="token punctuation">(</span><span class="token keyword">new</span> AsyncAction<span class="token punctuation">.</span>PendingException<span class="token punctuation">)</span>
+<span class="token punctuation">)</span> <span class="token keyword">extends</span> AsyncAction<span class="token punctuation">[</span>Todos<span class="token punctuation">,</span> UpdateTodos<span class="token punctuation">]</span> <span class="token punctuation">{</span>
+  <span class="token keyword">def</span> next<span class="token punctuation">(</span>newState<span class="token operator">:</span> PotState<span class="token punctuation">,</span> newResult<span class="token operator">:</span> Try<span class="token punctuation">[</span>Todos<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token operator">:</span> P <span class="token operator">=</span> UpdateTodos<span class="token punctuation">(</span>newState<span class="token punctuation">,</span> newResult<span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h2 id="retries">Retries</h2>
+<p>A common pattern with async data is to retry failed operations a few times. <code>AsyncActionRetriable</code> and <code>PotActionRetriable</code> support this pattern by providing
+a retry policy. The retry policy resides in the action and it&apos;s updated on every retry. Therefore you need to pass it forward in the <code>next</code> method.</p>
+<pre><code class="lang-scala"><span class="token keyword">case</span> <span class="token keyword">class</span> UpdateTodos<span class="token punctuation">(</span>result<span class="token operator">:</span> Pot<span class="token punctuation">[</span>Todos<span class="token punctuation">]</span> <span class="token operator">=</span> Empty<span class="token punctuation">,</span> retryPolicy<span class="token operator">:</span> RetryPolicy <span class="token operator">=</span> Retry<span class="token punctuation">.</span>None<span class="token punctuation">)</span> 
+  <span class="token keyword">extends</span> PotAction<span class="token punctuation">[</span>Todos<span class="token punctuation">,</span> UpdateTodos<span class="token punctuation">]</span> <span class="token punctuation">{</span>
+  <span class="token keyword">def</span> next<span class="token punctuation">(</span>newResult<span class="token operator">:</span> Pot<span class="token punctuation">[</span>Todos<span class="token punctuation">]</span><span class="token punctuation">,</span> newRetryPolicy<span class="token operator">:</span> RetryPolicy<span class="token punctuation">)</span> <span class="token operator">=</span> UpdateTodos<span class="token punctuation">(</span>newResult<span class="token punctuation">,</span> newRetryPolicy<span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>When a failure is encountered, the retry policy is consulted on what to do next:</p>
+<pre><code class="lang-scala"><span class="token keyword">case</span> PotFailed <span class="token keyword">=&gt;</span>
+  <span class="token comment" spellcheck="true">// extract exception from action and call retryPolicy</span>
+  action<span class="token punctuation">.</span>retryPolicy<span class="token punctuation">.</span>retry<span class="token punctuation">(</span>action<span class="token punctuation">.</span>result<span class="token punctuation">.</span>failed<span class="token punctuation">.</span>get<span class="token punctuation">,</span> updateEffect<span class="token punctuation">)</span> <span class="token keyword">match</span> <span class="token punctuation">{</span>
+    <span class="token keyword">case</span> Right<span class="token punctuation">(</span><span class="token punctuation">(</span>_<span class="token punctuation">,</span> retryEffect<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
+      effectOnly<span class="token punctuation">(</span>retryEffect<span class="token punctuation">)</span>
+    <span class="token keyword">case</span> Left<span class="token punctuation">(</span>ex<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
+      updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>fail<span class="token punctuation">(</span>ex<span class="token punctuation">)</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span>
+</code></pre>
+<p>Common retry policies <code>Immediate</code> and <code>Backoff</code> are available in the <code>Retry</code> object, but feel free to roll your own.</p>
 
                     
                     </section>

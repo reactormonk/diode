@@ -2431,6 +2431,7 @@ $h_Lexample_TodoList$.prototype = $c_Lexample_TodoList$.prototype;
 $c_Lexample_TodoList$.prototype.init___ = (function() {
   $n_Lexample_TodoList$ = this;
   $m_Ljapgolly_scalajs_react_ReactComponentB$();
+  $m_Ljapgolly_scalajs_react_ReactComponentB$();
   var x = ($m_Ljapgolly_scalajs_react_ReactComponentB$(), new $c_Ljapgolly_scalajs_react_ReactComponentB$P().init___T("TodoList")).initialState$undP__F1__Ljapgolly_scalajs_react_ReactComponentB$PS(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(p$2) {
     $as_Lexample_TodoList$Props(p$2);
     return new $c_Lexample_TodoList$State().init___s_Option($m_s_None$())
@@ -2446,7 +2447,10 @@ $c_Lexample_TodoList$.prototype.init___ = (function() {
     var t = jsx$2.render__Lexample_TodoList$Props__Lexample_TodoList$State__Ljapgolly_scalajs_react_vdom_ReactTagOf(jsx$1, $as_Lexample_TodoList$State(this$6.state__Ljapgolly_scalajs_react_CompScope$CanSetState__O($$)));
     return t.render__Ljapgolly_scalajs_react_ReactElement()
   })));
-  this.component$1 = $as_Ljapgolly_scalajs_react_ReactComponentC$ReqProps(($m_Ljapgolly_scalajs_react_ReactComponentB$(), x.domType__Ljapgolly_scalajs_react_ReactComponentB()).propsRequired__Ljapgolly_scalajs_react_ReactComponentB$Builder().build__O());
+  var x$1 = x.domType__Ljapgolly_scalajs_react_ReactComponentB().componentDidMount__F1__Ljapgolly_scalajs_react_ReactComponentB(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(scope$2) {
+    return new $c_Ljapgolly_scalajs_react_CallbackTo().init___F0($as_Lexample_TodoList$Backend(scope$2["backend"]).mounted__Lexample_TodoList$Props__F0($as_Lexample_TodoList$Props(scope$2["props"]["v"])))
+  })));
+  this.component$1 = $as_Ljapgolly_scalajs_react_ReactComponentC$ReqProps(x$1.propsRequired__Ljapgolly_scalajs_react_ReactComponentB$Builder().build__O());
   return this
 });
 $c_Lexample_TodoList$.prototype.apply__Ldiode_react_ModelProxy__Lexample_TodoFilter__Ljapgolly_scalajs_react_extra_router_RouterCtl__Ljapgolly_scalajs_react_ReactComponentU = (function(proxy, currentFilter, ctl) {
@@ -2518,6 +2522,9 @@ $c_Lexample_TodoList$Backend.prototype.todoList__F1__s_Option__sc_Seq__I__Ljapgo
     return new $c_Ljapgolly_scalajs_react_vdom_Scalatags$ReactNodeFrag().init___Ljapgolly_scalajs_react_ReactNode(v$2)
   }));
   return jsx$8.apply__sc_Seq__Ljapgolly_scalajs_react_vdom_ReactTagOf(new $c_sjs_js_WrappedArray().init___sjs_js_Array([jsx$7, jsx$4, jsx$3.apply__sc_Seq__Ljapgolly_scalajs_react_vdom_ReactTagOf(new $c_sjs_js_WrappedArray().init___sjs_js_Array([jsx$2, new $c_Ljapgolly_scalajs_react_vdom_Scalatags$SeqNode().init___sc_Seq__F1(xs, evidence$5)]))]))
+});
+$c_Lexample_TodoList$Backend.prototype.mounted__Lexample_TodoList$Props__F0 = (function(props) {
+  return $as_Ljapgolly_scalajs_react_CallbackTo(props.proxy$1.dispatch$1.apply__O__O($m_Lexample_InitTodos$())).japgolly$scalajs$react$CallbackTo$$f$1
 });
 $c_Lexample_TodoList$Backend.prototype.init___Ljapgolly_scalajs_react_BackendScope = (function($$) {
   this.example$TodoList$Backend$$$$f = $$;
@@ -2696,6 +2703,7 @@ function $m_Lexample_TodoView$() {
 function $c_Lexample_TodoView$Backend() {
   $c_O.call(this);
   this.example$TodoView$Backend$$$$f = null;
+  this.x$1 = null;
   this.editFieldChanged$1 = null
 }
 $c_Lexample_TodoView$Backend.prototype = new $h_O();
@@ -2707,7 +2715,15 @@ function $h_Lexample_TodoView$Backend() {
 $h_Lexample_TodoView$Backend.prototype = $c_Lexample_TodoView$Backend.prototype;
 $c_Lexample_TodoView$Backend.prototype.init___Ljapgolly_scalajs_react_BackendScope = (function($$) {
   this.example$TodoView$Backend$$$$f = $$;
-  this.editFieldChanged$1 = new $c_Lexample_TodoView$Backend$$anonfun$2().init___Lexample_TodoView$Backend(this);
+  this.x$1 = $m_Ljapgolly_scalajs_react_CallbackTo$().map$extension__F0__F1__F0(new $c_sjsr_AnonFunction0().init___sjs_js_Function0((function($$this$1) {
+    return (function() {
+      return $$this$1["props"]["v"]
+    })
+  })($$)), new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(x$1$2) {
+    var x$1 = $as_Lexample_TodoView$Props(x$1$2);
+    return x$1.isEditing$1
+  })));
+  this.editFieldChanged$1 = new $c_Lexample_TodoView$Backend$$anonfun$3().init___Lexample_TodoView$Backend(this);
   return this
 });
 $c_Lexample_TodoView$Backend.prototype.editFieldKeyDown__Lexample_TodoView$Props__F1 = (function(p) {
@@ -2856,15 +2872,15 @@ $c_Lexample_TodoView$Backend.prototype.render__Lexample_TodoView$Props__Lexample
 $c_Lexample_TodoView$Backend.prototype.resetText__Lexample_TodoView$Props__F0 = (function(p) {
   var $$ = this.example$TodoView$Backend$$$$f;
   var qual$1 = new $c_Ljapgolly_scalajs_react_CompState$ReadCallbackWriteCallback().init___O__Ljapgolly_scalajs_react_CompState$Accessor($$, $m_Ljapgolly_scalajs_react_CompState$RootAccessor$().instance$1);
-  var x$3 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(p$3) {
-    return (function(x$1$2) {
-      $as_Lexample_TodoView$State(x$1$2);
+  var x$4 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(p$3) {
+    return (function(x$2$2) {
+      $as_Lexample_TodoView$State(x$2$2);
       var editText = p$3.todo$1.title$1;
       return new $c_Lexample_TodoView$State().init___T(editText)
     })
   })(p));
-  var x$4 = $m_Ljapgolly_scalajs_react_Callback$().empty$1;
-  return $s_Ljapgolly_scalajs_react_CompState$WriteCallbackOps$class__modState__Ljapgolly_scalajs_react_CompState$WriteCallbackOps__F1__F0__F0(qual$1, x$3, x$4)
+  var x$5 = $m_Ljapgolly_scalajs_react_Callback$().empty$1;
+  return $s_Ljapgolly_scalajs_react_CompState$WriteCallbackOps$class__modState__Ljapgolly_scalajs_react_CompState$WriteCallbackOps__F1__F0__F0(qual$1, x$4, x$5)
 });
 function $is_Lexample_TodoView$Backend(obj) {
   return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Lexample_TodoView$Backend)))
@@ -27044,6 +27060,57 @@ var $d_Lexample_Footer$Props = new $TypeData().initClass({
 });
 $c_Lexample_Footer$Props.prototype.$classData = $d_Lexample_Footer$Props;
 /** @constructor */
+function $c_Lexample_InitTodos$() {
+  $c_O.call(this)
+}
+$c_Lexample_InitTodos$.prototype = new $h_O();
+$c_Lexample_InitTodos$.prototype.constructor = $c_Lexample_InitTodos$;
+/** @constructor */
+function $h_Lexample_InitTodos$() {
+  /*<skip>*/
+}
+$h_Lexample_InitTodos$.prototype = $c_Lexample_InitTodos$.prototype;
+$c_Lexample_InitTodos$.prototype.init___ = (function() {
+  $n_Lexample_InitTodos$ = this;
+  return this
+});
+$c_Lexample_InitTodos$.prototype.productPrefix__T = (function() {
+  return "InitTodos"
+});
+$c_Lexample_InitTodos$.prototype.productArity__I = (function() {
+  return 0
+});
+$c_Lexample_InitTodos$.prototype.productElement__I__O = (function(x$1) {
+  throw new $c_jl_IndexOutOfBoundsException().init___T(("" + x$1))
+});
+$c_Lexample_InitTodos$.prototype.toString__T = (function() {
+  return "InitTodos"
+});
+$c_Lexample_InitTodos$.prototype.hashCode__I = (function() {
+  return 1735988637
+});
+$c_Lexample_InitTodos$.prototype.productIterator__sc_Iterator = (function() {
+  return new $c_sr_ScalaRunTime$$anon$1().init___s_Product(this)
+});
+var $d_Lexample_InitTodos$ = new $TypeData().initClass({
+  Lexample_InitTodos$: 0
+}, false, "example.InitTodos$", {
+  Lexample_InitTodos$: 1,
+  O: 1,
+  s_Product: 1,
+  s_Equals: 1,
+  s_Serializable: 1,
+  Ljava_io_Serializable: 1
+});
+$c_Lexample_InitTodos$.prototype.$classData = $d_Lexample_InitTodos$;
+var $n_Lexample_InitTodos$ = (void 0);
+function $m_Lexample_InitTodos$() {
+  if ((!$n_Lexample_InitTodos$)) {
+    $n_Lexample_InitTodos$ = new $c_Lexample_InitTodos$().init___()
+  };
+  return $n_Lexample_InitTodos$
+}
+/** @constructor */
 function $c_Lexample_SelectFilter() {
   $c_O.call(this);
   this.filter$1 = null
@@ -27785,34 +27852,34 @@ var $d_Lexample_TodoMVC$$anonfun$2$$anonfun$example$TodoMVC$$anonfun$$filterRout
 });
 $c_Lexample_TodoMVC$$anonfun$2$$anonfun$example$TodoMVC$$anonfun$$filterRoute$1$2$$anonfun$apply$1.prototype.$classData = $d_Lexample_TodoMVC$$anonfun$2$$anonfun$example$TodoMVC$$anonfun$$filterRoute$1$2$$anonfun$apply$1;
 /** @constructor */
-function $c_Lexample_TodoView$Backend$$anonfun$2() {
+function $c_Lexample_TodoView$Backend$$anonfun$3() {
   $c_sr_AbstractFunction1.call(this);
   this.$$outer$2 = null
 }
-$c_Lexample_TodoView$Backend$$anonfun$2.prototype = new $h_sr_AbstractFunction1();
-$c_Lexample_TodoView$Backend$$anonfun$2.prototype.constructor = $c_Lexample_TodoView$Backend$$anonfun$2;
+$c_Lexample_TodoView$Backend$$anonfun$3.prototype = new $h_sr_AbstractFunction1();
+$c_Lexample_TodoView$Backend$$anonfun$3.prototype.constructor = $c_Lexample_TodoView$Backend$$anonfun$3;
 /** @constructor */
-function $h_Lexample_TodoView$Backend$$anonfun$2() {
+function $h_Lexample_TodoView$Backend$$anonfun$3() {
   /*<skip>*/
 }
-$h_Lexample_TodoView$Backend$$anonfun$2.prototype = $c_Lexample_TodoView$Backend$$anonfun$2.prototype;
-$c_Lexample_TodoView$Backend$$anonfun$2.prototype.apply__O__O = (function(v1) {
+$h_Lexample_TodoView$Backend$$anonfun$3.prototype = $c_Lexample_TodoView$Backend$$anonfun$3.prototype;
+$c_Lexample_TodoView$Backend$$anonfun$3.prototype.apply__O__O = (function(v1) {
   return new $c_Ljapgolly_scalajs_react_CallbackTo().init___F0(this.apply__Ljapgolly_scalajs_react_SyntheticEvent__F0(v1))
 });
-$c_Lexample_TodoView$Backend$$anonfun$2.prototype.apply__Ljapgolly_scalajs_react_SyntheticEvent__F0 = (function(e) {
+$c_Lexample_TodoView$Backend$$anonfun$3.prototype.apply__Ljapgolly_scalajs_react_SyntheticEvent__F0 = (function(e) {
   var $$ = this.$$outer$2.example$TodoView$Backend$$$$f;
   var qual$2 = new $c_Ljapgolly_scalajs_react_CompState$ReadCallbackWriteCallback().init___O__Ljapgolly_scalajs_react_CompState$Accessor($$, $m_Ljapgolly_scalajs_react_CompState$RootAccessor$().instance$1);
-  var x$5 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(e$1) {
-    return (function(x$2$2) {
-      $as_Lexample_TodoView$State(x$2$2);
+  var x$6 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(e$1) {
+    return (function(x$3$2) {
+      $as_Lexample_TodoView$State(x$3$2);
       var editText = $as_T(e$1["target"]["value"]);
       return new $c_Lexample_TodoView$State().init___T(editText)
     })
   })(e));
-  var x$6 = $m_Ljapgolly_scalajs_react_Callback$().empty$1;
-  return $s_Ljapgolly_scalajs_react_CompState$WriteCallbackOps$class__modState__Ljapgolly_scalajs_react_CompState$WriteCallbackOps__F1__F0__F0(qual$2, x$5, x$6)
+  var x$7 = $m_Ljapgolly_scalajs_react_Callback$().empty$1;
+  return $s_Ljapgolly_scalajs_react_CompState$WriteCallbackOps$class__modState__Ljapgolly_scalajs_react_CompState$WriteCallbackOps__F1__F0__F0(qual$2, x$6, x$7)
 });
-$c_Lexample_TodoView$Backend$$anonfun$2.prototype.init___Lexample_TodoView$Backend = (function($$outer) {
+$c_Lexample_TodoView$Backend$$anonfun$3.prototype.init___Lexample_TodoView$Backend = (function($$outer) {
   if (($$outer === null)) {
     throw $m_sjsr_package$().unwrapJavaScriptException__jl_Throwable__O(null)
   } else {
@@ -27820,17 +27887,17 @@ $c_Lexample_TodoView$Backend$$anonfun$2.prototype.init___Lexample_TodoView$Backe
   };
   return this
 });
-var $d_Lexample_TodoView$Backend$$anonfun$2 = new $TypeData().initClass({
-  Lexample_TodoView$Backend$$anonfun$2: 0
-}, false, "example.TodoView$Backend$$anonfun$2", {
-  Lexample_TodoView$Backend$$anonfun$2: 1,
+var $d_Lexample_TodoView$Backend$$anonfun$3 = new $TypeData().initClass({
+  Lexample_TodoView$Backend$$anonfun$3: 0
+}, false, "example.TodoView$Backend$$anonfun$3", {
+  Lexample_TodoView$Backend$$anonfun$3: 1,
   sr_AbstractFunction1: 1,
   O: 1,
   F1: 1,
   s_Serializable: 1,
   Ljava_io_Serializable: 1
 });
-$c_Lexample_TodoView$Backend$$anonfun$2.prototype.$classData = $d_Lexample_TodoView$Backend$$anonfun$2;
+$c_Lexample_TodoView$Backend$$anonfun$3.prototype.$classData = $d_Lexample_TodoView$Backend$$anonfun$3;
 /** @constructor */
 function $c_Lexample_TodoView$Props() {
   $c_O.call(this);
@@ -32793,13 +32860,13 @@ function $h_Ldiode_ZoomModelRW() {
   /*<skip>*/
 }
 $h_Ldiode_ZoomModelRW.prototype = $c_Ldiode_ZoomModelRW.prototype;
-$c_Ldiode_ZoomModelRW.prototype.setF__O__O__O = (function(model, value) {
-  return this.set$2.apply__O__O__O(model, value)
-});
 $c_Ldiode_ZoomModelRW.prototype.init___Ldiode_ModelR__F1__F2 = (function(root, get, set) {
   this.set$2 = set;
   $c_Ldiode_ZoomModelR.prototype.init___Ldiode_ModelR__F1.call(this, root, get);
   return this
+});
+$c_Ldiode_ZoomModelRW.prototype.setF__O__O__O = (function(model, value) {
+  return this.set$2.apply__O__O__O(model, value)
 });
 var $d_Ldiode_ZoomModelRW = new $TypeData().initClass({
   Ldiode_ZoomModelRW: 0
@@ -32834,7 +32901,10 @@ $c_Lexample_TodoHandler$$anonfun$handle$1.prototype.init___Lexample_TodoHandler 
   return this
 });
 $c_Lexample_TodoHandler$$anonfun$handle$1.prototype.isDefinedAt__O__Z = (function(x1) {
-  if ($is_Lexample_AddTodo(x1)) {
+  var x = $m_Lexample_InitTodos$();
+  if ((x === x1)) {
+    return true
+  } else if ($is_Lexample_AddTodo(x1)) {
     return true
   } else if ($is_Lexample_ToggleAll(x1)) {
     return true
@@ -32845,27 +32915,35 @@ $c_Lexample_TodoHandler$$anonfun$handle$1.prototype.isDefinedAt__O__Z = (functio
   } else if ($is_Lexample_Delete(x1)) {
     return true
   } else {
-    var x = $m_Lexample_ClearCompleted$();
-    return (x === x1)
+    var x$3 = $m_Lexample_ClearCompleted$();
+    return (x$3 === x1)
   }
 });
 $c_Lexample_TodoHandler$$anonfun$handle$1.prototype.applyOrElse__O__F1__O = (function(x1, $default) {
-  if ($is_Lexample_AddTodo(x1)) {
+  var x = $m_Lexample_InitTodos$();
+  if ((x === x1)) {
+    var jsx$1 = this.$$outer$2;
+    $m_sci_List$();
+    var xs = new $c_sjs_js_WrappedArray().init___sjs_js_Array([new $c_Lexample_Todo().init___Lexample_TodoId__T__Z(new $c_Lexample_TodoId().init___ju_UUID($m_ju_UUID$().randomUUID__ju_UUID()), "Test your code!", false)]);
+    var this$3 = $m_sci_List$();
+    var cbf = this$3.ReusableCBFInstance$2;
+    return jsx$1.updated__O__Ldiode_ActionResult($as_sci_List($s_sc_TraversableLike$class__to__sc_TraversableLike__scg_CanBuildFrom__O(xs, cbf)))
+  } else if ($is_Lexample_AddTodo(x1)) {
     var x2 = $as_Lexample_AddTodo(x1);
     var title = x2.title$1;
-    var jsx$3 = this.$$outer$2;
-    var this$1 = this.$$outer$2;
-    var jsx$2 = $as_sc_SeqLike(this$1.modelRW$1.value__O());
-    var jsx$1 = new $c_Lexample_Todo().init___Lexample_TodoId__T__Z(new $c_Lexample_TodoId().init___ju_UUID($m_ju_UUID$().randomUUID__ju_UUID()), title, false);
-    var this$3 = $m_sc_Seq$();
-    return jsx$3.updated__O__Ldiode_ActionResult(jsx$2.$$colon$plus__O__scg_CanBuildFrom__O(jsx$1, this$3.ReusableCBFInstance$2))
+    var jsx$4 = this.$$outer$2;
+    var this$4 = this.$$outer$2;
+    var jsx$3 = $as_sc_SeqLike(this$4.modelRW$1.value__O());
+    var jsx$2 = new $c_Lexample_Todo().init___Lexample_TodoId__T__Z(new $c_Lexample_TodoId().init___ju_UUID($m_ju_UUID$().randomUUID__ju_UUID()), title, false);
+    var this$6 = $m_sc_Seq$();
+    return jsx$4.updated__O__Ldiode_ActionResult(jsx$3.$$colon$plus__O__scg_CanBuildFrom__O(jsx$2, this$6.ReusableCBFInstance$2))
   } else if ($is_Lexample_ToggleAll(x1)) {
     var x3 = $as_Lexample_ToggleAll(x1);
     var checked = x3.checked$1;
-    var jsx$6 = this.$$outer$2;
-    var this$4 = this.$$outer$2;
-    var jsx$5 = $as_sc_TraversableLike(this$4.modelRW$1.value__O());
-    var jsx$4 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(checked$1) {
+    var jsx$7 = this.$$outer$2;
+    var this$7 = this.$$outer$2;
+    var jsx$6 = $as_sc_TraversableLike(this$7.modelRW$1.value__O());
+    var jsx$5 = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(checked$1) {
       return (function(x$3$2) {
         var x$3 = $as_Lexample_Todo(x$3$2);
         var x$8 = x$3.id$1;
@@ -32873,8 +32951,8 @@ $c_Lexample_TodoHandler$$anonfun$handle$1.prototype.applyOrElse__O__F1__O = (fun
         return new $c_Lexample_Todo().init___Lexample_TodoId__T__Z(x$8, x$9, checked$1)
       })
     })(checked));
-    var this$5 = $m_sc_Seq$();
-    return jsx$6.updated__O__Ldiode_ActionResult(jsx$5.map__F1__scg_CanBuildFrom__O(jsx$4, this$5.ReusableCBFInstance$2))
+    var this$8 = $m_sc_Seq$();
+    return jsx$7.updated__O__Ldiode_ActionResult(jsx$6.map__F1__scg_CanBuildFrom__O(jsx$5, this$8.ReusableCBFInstance$2))
   } else if ($is_Lexample_ToggleCompleted(x1)) {
     var x4 = $as_Lexample_ToggleCompleted(x1);
     var id = x4.id$1;
@@ -32900,21 +32978,21 @@ $c_Lexample_TodoHandler$$anonfun$handle$1.prototype.applyOrElse__O__F1__O = (fun
   } else if ($is_Lexample_Delete(x1)) {
     var x6 = $as_Lexample_Delete(x1);
     var id$3 = x6.id$1;
-    var jsx$7 = this.$$outer$2;
-    var this$6 = this.$$outer$2;
-    return jsx$7.updated__O__Ldiode_ActionResult($as_sc_TraversableLike(this$6.modelRW$1.value__O()).filterNot__F1__O(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(id$1) {
+    var jsx$8 = this.$$outer$2;
+    var this$9 = this.$$outer$2;
+    return jsx$8.updated__O__Ldiode_ActionResult($as_sc_TraversableLike(this$9.modelRW$1.value__O()).filterNot__F1__O(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(id$1) {
       return (function(x$5$2) {
         var x$5 = $as_Lexample_Todo(x$5$2);
-        var x = x$5.id$1;
-        return ((x === null) ? (id$1 === null) : x.equals__O__Z(id$1))
+        var x$1 = x$5.id$1;
+        return ((x$1 === null) ? (id$1 === null) : x$1.equals__O__Z(id$1))
       })
     })(id$3))))
   } else {
-    var x$1 = $m_Lexample_ClearCompleted$();
-    if ((x$1 === x1)) {
-      var jsx$8 = this.$$outer$2;
-      var this$7 = this.$$outer$2;
-      return jsx$8.updated__O__Ldiode_ActionResult($as_sc_TraversableLike(this$7.modelRW$1.value__O()).filterNot__F1__O(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(x$6$2) {
+    var x$3$1 = $m_Lexample_ClearCompleted$();
+    if ((x$3$1 === x1)) {
+      var jsx$9 = this.$$outer$2;
+      var this$10 = this.$$outer$2;
+      return jsx$9.updated__O__Ldiode_ActionResult($as_sc_TraversableLike(this$10.modelRW$1.value__O()).filterNot__F1__O(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(x$6$2) {
         var x$6 = $as_Lexample_Todo(x$6$2);
         return x$6.isCompleted$1
       }))))

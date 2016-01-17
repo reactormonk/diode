@@ -13499,13 +13499,13 @@ $h_Ldiode_ZoomModelRW.prototype = $c_Ldiode_ZoomModelRW.prototype;
 $c_Ldiode_ZoomModelRW.prototype.zoomRW__F1__F2__Ldiode_ZoomModelRW = (function(get, set) {
   return $s_Ldiode_BaseModelRW$class__zoomRW__Ldiode_BaseModelRW__F1__F2__Ldiode_ZoomModelRW(this, get, set)
 });
-$c_Ldiode_ZoomModelRW.prototype.setF__O__O__O = (function(model, value) {
-  return this.set$2.apply__O__O__O(model, value)
-});
 $c_Ldiode_ZoomModelRW.prototype.init___Ldiode_ModelR__F1__F2 = (function(root, get, set) {
   this.set$2 = set;
   $c_Ldiode_ZoomModelR.prototype.init___Ldiode_ModelR__F1.call(this, root, get);
   return this
+});
+$c_Ldiode_ZoomModelRW.prototype.setF__O__O__O = (function(model, value) {
+  return this.set$2.apply__O__O__O(model, value)
 });
 var $d_Ldiode_ZoomModelRW = new $TypeData().initClass({
   Ldiode_ZoomModelRW: 0

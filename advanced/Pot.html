@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="2.1" data-chapter-title="Async Model Data" data-filepath="advanced/Pot.md" data-basepath=".." data-revision="Wed Dec 30 2015 22:50:34 GMT+0200 (FLE Standard Time)">
+    <div class="book" data-level="2.1" data-chapter-title="Async Model Data" data-filepath="advanced/Pot.md" data-basepath=".." data-revision="Sun Jan 17 2016 23:42:00 GMT+0200 (FLE Standard Time)">
     
 
 <div class="book-summary">
@@ -364,23 +364,6 @@ old data.</p>
 <p>You can query specific state via <code>isX</code> functions, or use <code>state</code> for matching. Note that <code>isEmpty</code> means there is no data in the <code>Pot</code>, so states <code>Unavailable</code>,
 <code>Pending</code> and <code>Failed</code>, in addition to <code>Empty</code>, all return <code>true</code>.</p>
 <p>Otherwise a <code>Pot</code> works like an <code>Option</code> (<code>Empty</code>, <code>Unavailable</code>, <code>Pending</code> and <code>Failed</code> work like <code>None</code>).</p>
-<h3 id="retries">Retries</h3>
-<p>A common pattern with async data is to retry failed loads a few times. <code>Pot</code> supports this pattern by providing a retry policy (<code>retryPolicy</code>) and some state
-management to deal with retries. A typical case is to check for retry after <code>Pot</code> goes into failed state and then retry the operation like in the example below:</p>
-<pre><code class="lang-scala"><span class="token keyword">val</span> value<span class="token operator">:</span> Pot<span class="token punctuation">[</span>A<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-
-<span class="token keyword">case</span> PotEmpty <span class="token keyword">=&gt;</span>
-  updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>pending<span class="token punctuation">(</span>retryPolicy<span class="token punctuation">)</span><span class="token punctuation">,</span> updateEffect<span class="token punctuation">)</span>
-<span class="token keyword">case</span> PotFailed <span class="token keyword">=&gt;</span>
-  value<span class="token punctuation">.</span>retryPolicy<span class="token punctuation">.</span>retry<span class="token punctuation">(</span>action<span class="token punctuation">.</span>value<span class="token punctuation">,</span> updateEffect<span class="token punctuation">)</span> <span class="token keyword">match</span> <span class="token punctuation">{</span>
-    <span class="token keyword">case</span> Right<span class="token punctuation">(</span><span class="token punctuation">(</span>nextPolicy<span class="token punctuation">,</span> retryEffect<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
-      updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>retry<span class="token punctuation">(</span>nextPolicy<span class="token punctuation">)</span><span class="token punctuation">,</span> retryEffect<span class="token punctuation">)</span>
-    <span class="token keyword">case</span> Left<span class="token punctuation">(</span>ex<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
-      updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>fail<span class="token punctuation">(</span>ex<span class="token punctuation">)</span><span class="token punctuation">)</span>
-  <span class="token punctuation">}</span>
-</code></pre>
-<p>The <code>Pot.retry</code> function sets the <code>Pot</code> into <code>Pending</code> (or <code>PendingStale</code>) state and updates <code>retryPolicy</code>. Common retry policies <code>Immediate</code> and <code>Backoff</code> are
-available in the <code>Retry</code> object, but feel free to roll your own.</p>
 <h3 id="pending-time">Pending Time</h3>
 <p>The pending states of <code>Pot</code> store a time stamp when created. You can access this through <code>startTime</code>, or you can directly get the duration of the operation
 with <code>duration(currentTime)</code>. This is useful in an user interface, where you&apos;ll want to show an indicator if the operation is taking too long. If
