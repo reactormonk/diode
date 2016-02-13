@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="2.4" data-chapter-title="Action Processors" data-filepath="advanced/ActionProcessors.md" data-basepath=".." data-revision="Sun Jan 17 2016 23:42:00 GMT+0200 (FLE Standard Time)">
+    <div class="book" data-level="2.4" data-chapter-title="Action Processors" data-filepath="advanced/ActionProcessors.md" data-basepath=".." data-revision="Sat Feb 13 2016 23:26:10 GMT+0200 (FLE Standard Time)">
     
 
 <div class="book-summary">
@@ -327,7 +327,7 @@ them. The processors can also intercept the return value from the action handler
   <span class="token keyword">var</span> log <span class="token operator">=</span> Vector<span class="token punctuation">.</span>empty<span class="token punctuation">[</span><span class="token punctuation">(</span><span class="token builtin">Long</span><span class="token punctuation">,</span> <span class="token builtin">String</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
   <span class="token keyword">def</span> process<span class="token punctuation">(</span>dispatch<span class="token operator">:</span> Dispatcher<span class="token punctuation">,</span> action<span class="token operator">:</span> <span class="token builtin">AnyRef</span><span class="token punctuation">,</span> next<span class="token operator">:</span> <span class="token punctuation">(</span><span class="token builtin">AnyRef</span><span class="token punctuation">)</span> <span class="token keyword">=&gt;</span> ActionResult<span class="token punctuation">[</span>M<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token operator">:</span> ActionResult<span class="token punctuation">[</span>M<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
     <span class="token comment" spellcheck="true">// log the action</span>
-    log <span class="token operator">=</span> log <span class="token operator">:</span><span class="token operator">+</span> <span class="token punctuation">(</span><span class="token keyword">new</span> java<span class="token punctuation">.</span>util<span class="token punctuation">.</span>Date<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>getTime<span class="token punctuation">,</span> action<span class="token punctuation">.</span>toString<span class="token punctuation">)</span>
+    log <span class="token operator">=</span> log <span class="token operator">:</span><span class="token operator">+</span> <span class="token punctuation">(</span>System<span class="token punctuation">.</span>currentTimeMillis<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> action<span class="token punctuation">.</span>toString<span class="token punctuation">)</span>
     <span class="token comment" spellcheck="true">// call the next processor</span>
     next<span class="token punctuation">(</span>action<span class="token punctuation">)</span>
   <span class="token punctuation">}</span>

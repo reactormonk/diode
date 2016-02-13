@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.3" data-chapter-title="Action Handlers" data-filepath="usage/Handlers.md" data-basepath=".." data-revision="Sun Jan 17 2016 23:42:00 GMT+0200 (FLE Standard Time)">
+    <div class="book" data-level="1.3" data-chapter-title="Action Handlers" data-filepath="usage/Handlers.md" data-basepath=".." data-revision="Sat Feb 13 2016 23:26:10 GMT+0200 (FLE Standard Time)">
     
 
 <div class="book-summary">
@@ -318,18 +318,22 @@
                     
                         <h1 id="action-handlers">Action Handlers</h1>
 <p><img src="../images/architecture-circuit.png" style="float: right; padding: 10px">
-For dispatched actions to actually do anything, they need to be processed by <em>action handlers</em>. In principle, an action handler is a pure function of type
-<code>(model, action) =&gt; model</code> that takes in the current model and the dispatched action, and returns a new model. In practice, the handlers are typically partial
-functions that process different (related) actions, access only part of the model through a <code>ModelRW</code> trait and return an <code>ActionResult</code>.</p>
+For dispatched actions to actually do anything, they need to be processed by <em>action handlers</em>. In principle, an action
+handler is a pure function of type <code>(model, action) =&gt; model</code> that takes in the current model and the dispatched action,
+and returns a new model. In practice, the handlers are typically partial functions that process different (related)
+actions, access only part of the model through a <code>ModelRW</code> trait and return an <code>ActionResult</code>.</p>
 <h2 id="in-the-circuit">In the Circuit</h2>
-<p>All action handling takes place within the <code>Circuit</code>, which has a single <code>actionHandler</code> that takes care of all actions. Actually your application must define
-this function, typically by combining multiple <code>ActionHandler</code> classes together to form the final <em>partial function</em> that then handles the actions. There is
-also a <code>baseHandler</code> that handles any action that was not handled by the <code>actionHandler</code>, ensuring we don&apos;t get a runtime <code>MatchError</code>.</p>
-<p>You may define your action handlers within your application <code>Circuit</code> singleton object as anonymous classes, or use external classes. The former is simpler to
-implement while the latter is better for independent testing. In our examples the handlers are defined using both strategies.</p>
-<h2 id="learn-by-example">Learn by Example</h2>
-<p>Let&apos;s use a bit more complex example for building our action handlers, to show how you would do it in real-life applications. Our data will represent a 
-hierarchical directory structure with both files and directories. This can be defined as a trait and two case classes.</p>
+<p>All action handling takes place within the <code>Circuit</code>, which has a single <code>actionHandler</code> method that takes care of all
+actions. Actually your application must define this function, typically by combining multiple <code>ActionHandler</code> classes
+together to form the final <em>partial function</em> that then handles the actions. There is also a <code>baseHandler</code> that handles
+any action that was not handled by the <code>actionHandler</code>, ensuring we don&apos;t get a runtime <code>MatchError</code>.</p>
+<p>You may define your action handlers within your application <code>Circuit</code> singleton object as anonymous classes, or use
+external classes. The former is simpler to implement while the latter is better for independent testing. In our examples
+the handlers are defined using both strategies.</p>
+<h2 id="example-tree-data-model">Example Tree data model</h2>
+<p>Let&apos;s use a bit more complex example for building our action handlers, to show how you would do it in real-life
+applications. Our data will represent a hierarchical directory structure with both files and directories. This can be
+defined as a trait and two case classes.</p>
 <pre><code class="lang-scala"><span class="token keyword">sealed</span> <span class="token keyword">trait</span> FileNode <span class="token punctuation">{</span>
   <span class="token keyword">def</span> id<span class="token operator">:</span> <span class="token builtin">String</span>
   <span class="token keyword">def</span> name<span class="token operator">:</span> <span class="token builtin">String</span>
@@ -349,8 +353,8 @@ hierarchical directory structure with both files and directories. This can be de
   <span class="token keyword">override</span> <span class="token keyword">def</span> isDirectory <span class="token operator">=</span> <span class="token boolean">false</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<p>In our root model we don&apos;t want to have anything like a <code>Directory</code> so let&apos;s further define an intermediate model <code>Tree</code> to hold the root of the hierarchy and
-also some additional data.</p>
+<p>In our root model we don&apos;t want to have anything like a <code>Directory</code> so let&apos;s further define an intermediate model <code>Tree</code>
+to hold the root of the hierarchy and also some additional data.</p>
 <pre><code class="lang-scala"><span class="token keyword">case</span> <span class="token keyword">class</span> Tree<span class="token punctuation">(</span>root<span class="token operator">:</span> Directory<span class="token punctuation">,</span> selected<span class="token operator">:</span> Seq<span class="token punctuation">[</span><span class="token builtin">String</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
 
 <span class="token comment" spellcheck="true">// Define the root of our application model</span>
@@ -364,8 +368,8 @@ also some additional data.</p>
 <span class="token keyword">case</span> <span class="token keyword">class</span> Select<span class="token punctuation">(</span>selected<span class="token operator">:</span> Seq<span class="token punctuation">[</span><span class="token builtin">String</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
 </code></pre>
 <h3 id="writing-an-action-handler">Writing an Action Handler</h3>
-<p>Our action handler needs to deal with the directory hierarchy, so we need to zoom into it in our <code>ActionHandler</code>. To get started, we handle only the most
-simple action of replacing the whole tree.</p>
+<p>Our action handler needs to deal with the directory hierarchy, so we need to zoom into it in our <code>ActionHandler</code>. To get
+started, we handle only the most simple action of replacing the whole tree.</p>
 <pre><code class="lang-scala"><span class="token comment" spellcheck="true">// zoom into the model, providing access only to the `root` directory of the tree</span>
 <span class="token keyword">val</span> treeHandler <span class="token operator">=</span> <span class="token keyword">new</span> ActionHandler<span class="token punctuation">(</span>
   zoomRW<span class="token punctuation">(</span>_<span class="token punctuation">.</span>tree<span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">(</span>m<span class="token punctuation">,</span> v<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span> m<span class="token punctuation">.</span>copy<span class="token punctuation">(</span>tree <span class="token operator">=</span> v<span class="token punctuation">)</span><span class="token punctuation">)</span>
@@ -383,7 +387,8 @@ simple action of replacing the whole tree.</p>
 </code></pre>
 <p>but it&apos;s easier to understand when it&apos;s split up.</p>
 <p>Now our application is ready to handle dispatched <code>ReplaceTree</code> actions successfully!</p>
-<p><code>ActionHandler</code> is just an utility class providing common patterns for defining action handlers. If we look at its code, it&apos;s rather straightforward:</p>
+<p><code>ActionHandler</code> is just an utility class providing common patterns for defining action handlers. If we look at its code,
+it&apos;s rather straightforward:</p>
 <pre><code class="lang-scala"><span class="token keyword">abstract</span> <span class="token keyword">class</span> ActionHandler<span class="token punctuation">[</span>M<span class="token punctuation">,</span> T<span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token keyword">val</span> modelRW<span class="token operator">:</span> ModelRW<span class="token punctuation">[</span>M<span class="token punctuation">,</span> T<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">def</span> handle<span class="token operator">:</span> PartialFunction<span class="token punctuation">[</span><span class="token builtin">AnyRef</span><span class="token punctuation">,</span> ActionResult<span class="token punctuation">[</span>M<span class="token punctuation">]</span><span class="token punctuation">]</span>
   <span class="token keyword">def</span> value<span class="token operator">:</span> T <span class="token operator">=</span> modelRW<span class="token punctuation">.</span>value
@@ -392,11 +397,13 @@ simple action of replacing the whole tree.</p>
 <span class="token punctuation">}</span>
 </code></pre>
 <h3 id="deep-diving">Deep Diving</h3>
-<p>The handler for <code>ReplaceTree</code> was trivial, since there was no need to dive into the directory hierarchy, but how would something like <code>AddNode</code> be handled? It
-gets a path as a parameter, defining the directory we are interested in. This is actually a sequence of identifiers, so we need to walk down the hierarchy to
-reach our goal. Because the same is needed in the other actions as well, let&apos;s define a common function to perform this traversal.</p>
-<p>We are actually interested in the <code>children</code> sequence of the directory, not the directory itself, so our traversal function should return a <code>ModelRW</code> that
-allows us to manipulate that indexed sequence directly. It may also fail to find a valid path, so we should wrap the result in an <code>Option</code>.</p>
+<p>The handler for <code>ReplaceTree</code> was trivial, since there was no need to dive into the directory hierarchy, but how would
+something like <code>AddNode</code> be handled? It gets a path as a parameter, defining the directory we are interested in. This is
+actually a sequence of identifiers, so we need to walk down the hierarchy to reach our goal. Because the same is needed
+in the other actions as well, let&apos;s define a common function to perform this traversal.</p>
+<p>We are actually interested in the <code>children</code> sequence of the directory, not the directory itself, so our traversal
+function should return a <code>ModelRW</code> that allows us to manipulate that indexed sequence directly. It may also fail to find
+a valid path, so we should wrap the result in an <code>Option</code>.</p>
 <pre><code class="lang-scala"><span class="token keyword">def</span> zoomToChildren<span class="token punctuation">[</span>M<span class="token punctuation">]</span><span class="token punctuation">(</span>path<span class="token operator">:</span> Seq<span class="token punctuation">[</span><span class="token builtin">String</span><span class="token punctuation">]</span><span class="token punctuation">,</span> rw<span class="token operator">:</span> ModelRW<span class="token punctuation">[</span>M<span class="token punctuation">,</span> Directory<span class="token punctuation">]</span><span class="token punctuation">)</span>
   <span class="token operator">:</span> Option<span class="token punctuation">[</span>ModelRW<span class="token punctuation">[</span>M<span class="token punctuation">,</span> IndexedSeq<span class="token punctuation">[</span>FileNode<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
   <span class="token keyword">if</span> <span class="token punctuation">(</span>path<span class="token punctuation">.</span>isEmpty<span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -406,7 +413,8 @@ allows us to manipulate that indexed sequence directly. It may also fail to find
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<p>In the trivial case (and at the end of the recursion) the path is empty and we&apos;ll return a <code>ModelRW</code> for the current directory&apos;s <code>children</code>.</p>
+<p>In the trivial case (and at the end of the recursion) the path is empty and we&apos;ll return a <code>ModelRW</code> for the current
+directory&apos;s <code>children</code>.</p>
 <p>Let&apos;s take a look at the full implementation.</p>
 <pre><code class="lang-scala"><span class="token keyword">def</span> zoomToChildren<span class="token punctuation">[</span>M<span class="token punctuation">]</span><span class="token punctuation">(</span>path<span class="token operator">:</span> Seq<span class="token punctuation">[</span><span class="token builtin">String</span><span class="token punctuation">]</span><span class="token punctuation">,</span> rw<span class="token operator">:</span> ModelRW<span class="token punctuation">[</span>M<span class="token punctuation">,</span> Directory<span class="token punctuation">]</span><span class="token punctuation">)</span>
   <span class="token operator">:</span> Option<span class="token punctuation">[</span>ModelRW<span class="token punctuation">[</span>M<span class="token punctuation">,</span> IndexedSeq<span class="token punctuation">[</span>FileNode<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
@@ -427,9 +435,10 @@ allows us to manipulate that indexed sequence directly. It may also fail to find
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<p>First we try to find the index to the <code>children</code> sequence, where the next directory in our path resides and depending on the result we either return <code>None</code> for 
-failure, or dive deeper into the hierarchy by recursively calling the same function again with am updated reader/writer and path. The writer function copies all
-nodes preceding the one we are interested in, then adds a new node and then any nodes succeeding the original node.</p>
+<p>First we try to find the index to the <code>children</code> sequence, where the next directory in our path resides and depending on
+the result we either return <code>None</code> for failure, or dive deeper into the hierarchy by recursively calling the same
+function again with am updated reader/writer and path. The writer function copies all nodes preceding the one we are
+interested in, then adds a new node and then any nodes succeeding the original node.</p>
 <p>Now we are ready to write action handlers for rest of the tree manipulation functions.</p>
 <pre><code class="lang-scala"><span class="token keyword">case</span> AddNode<span class="token punctuation">(</span>path<span class="token punctuation">,</span> node<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
   <span class="token comment" spellcheck="true">// zoom to the directory and add new node at the end of its children list</span>
@@ -438,8 +447,8 @@ nodes preceding the one we are interested in, then adds a new node and then any 
     <span class="token keyword">case</span> None <span class="token keyword">=&gt;</span> noChange
   <span class="token punctuation">}</span>
 </code></pre>
-<p>With the helper function to navigate the hierarchy the actual implementation of <code>AddNode</code> turns out to be quite trivial. Since we have access to the <code>children</code>
-of the parent directory, we simply need to add the new node at the end of it.</p>
+<p>With the helper function to navigate the hierarchy the actual implementation of <code>AddNode</code> turns out to be quite trivial.
+Since we have access to the <code>children</code> of the parent directory, we simply need to add the new node at the end of it.</p>
 <pre><code class="lang-scala"><span class="token keyword">case</span> RemoveNode<span class="token punctuation">(</span>path<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
   <span class="token keyword">if</span> <span class="token punctuation">(</span>path<span class="token punctuation">.</span>init<span class="token punctuation">.</span>nonEmpty<span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token comment" spellcheck="true">// zoom to parent directory and remove node from its children list</span>
@@ -465,11 +474,11 @@ of the parent directory, we simply need to add the new node at the end of it.</p
     noChange
   <span class="token punctuation">}</span>
 </code></pre>
-<p>Removal and replacement are almost identical, except for the final transformation of the <code>children</code> sequence. Here we also prevent removal or change of the root
-directory.</p>
+<p>Removal and replacement are almost identical, except for the final transformation of the <code>children</code> sequence. Here we
+also prevent removal or change of the root directory.</p>
 <h3 id="handling-selection">Handling Selection</h3>
-<p>As the <code>Select</code> action affects the <code>Tree</code> and not something under the root directory, we cannot handle it within the <code>treeHandler</code>. We&apos;ll need another action 
-handler for it.</p>
+<p>As the <code>Select</code> action affects the <code>Tree</code> and not something under the root directory, we cannot handle it within the
+<code>treeHandler</code>. We&apos;ll need another action handler for it.</p>
 <pre><code class="lang-scala"><span class="token keyword">val</span> selectionHandler <span class="token operator">=</span> <span class="token keyword">new</span> ActionHandler<span class="token punctuation">(</span>
   zoomRW<span class="token punctuation">(</span>_<span class="token punctuation">.</span>tree<span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">(</span>m<span class="token punctuation">,</span> v<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span> m<span class="token punctuation">.</span>copy<span class="token punctuation">(</span>tree <span class="token operator">=</span> v<span class="token punctuation">)</span><span class="token punctuation">)</span>
     <span class="token punctuation">.</span>zoomRW<span class="token punctuation">(</span>_<span class="token punctuation">.</span>selected<span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">(</span>m<span class="token punctuation">,</span> v<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span> m<span class="token punctuation">.</span>copy<span class="token punctuation">(</span>selected <span class="token operator">=</span> v<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -480,11 +489,12 @@ handler for it.</p>
 
 <span class="token keyword">override</span> <span class="token keyword">val</span> actionHandler <span class="token operator">=</span> combineHandlers<span class="token punctuation">(</span>treeHandler<span class="token punctuation">,</span> selectionHandler<span class="token punctuation">)</span>
 </code></pre>
-<p>Again we zoom into the <code>tree</code> but this time we continue to <code>selected</code>. The handler implementation is as trivial as with <code>ReplaceTree</code>. To inform <code>Circuit</code> about
-this new handler, we include it into the call to the <code>combineHandlers</code> function.</p>
+<p>Again we zoom into the <code>tree</code> but this time we continue to <code>selected</code>. The handler implementation is as trivial as with
+<code>ReplaceTree</code>. To inform <code>Circuit</code> about this new handler, we include it into the call to the <code>combineHandlers</code>
+function.</p>
 <h2 id="testing">Testing</h2>
-<p>As action handlers are pure functions, testing them is rather trivial. Although you can define handlers inline within your <code>Circuit</code> implementation, it&apos;s
-usually better to have them as separate classes for easy testing. For example:</p>
+<p>As action handlers are pure functions, testing them is rather trivial. Although you can define handlers inline within
+your <code>Circuit</code> implementation, it&apos;s usually better to have them as separate classes for easy testing. For example:</p>
 <pre><code class="lang-scala"><span class="token keyword">class</span> DirectoryTreeHandler<span class="token punctuation">[</span>M<span class="token punctuation">]</span><span class="token punctuation">(</span>modelRW<span class="token operator">:</span> ModelRW<span class="token punctuation">[</span>M<span class="token punctuation">,</span> Directory<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token keyword">extends</span> ActionHandler<span class="token punctuation">(</span>modelRW<span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">override</span> <span class="token keyword">def</span> handle <span class="token operator">=</span> <span class="token punctuation">{</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
@@ -496,8 +506,8 @@ usually better to have them as separate classes for easy testing. For example:</
   <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<p>In your test class you can instantiate the handler by supplying it with an appropriate reader/writer. Since the handler doesn&apos;t care about the root model type,
-usually easiest is just to use the data what your handler expects.</p>
+<p>In your test class you can instantiate the handler by supplying it with an appropriate reader/writer. Since the handler
+doesn&apos;t care about the root model type, usually easiest is just to use the data what your handler expects.</p>
 <pre><code class="lang-scala"><span class="token keyword">object</span> DirectoryTreeHandlerTests <span class="token keyword">extends</span> TestSuite <span class="token punctuation">{</span>
   <span class="token keyword">def</span> tests <span class="token operator">=</span> TestSuite <span class="token punctuation">{</span>
     <span class="token comment" spellcheck="true">// test data</span>

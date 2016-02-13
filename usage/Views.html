@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.4" data-chapter-title="Views" data-filepath="usage/Views.md" data-basepath=".." data-revision="Sun Jan 17 2016 23:42:00 GMT+0200 (FLE Standard Time)">
+    <div class="book" data-level="1.4" data-chapter-title="Views" data-filepath="usage/Views.md" data-basepath=".." data-revision="Sat Feb 13 2016 23:26:10 GMT+0200 (FLE Standard Time)">
     
 
 <div class="book-summary">
@@ -317,9 +317,10 @@
                     <section class="normal" id="section-">
                     
                         <h1 id="views">Views</h1>
-<p><img src="../images/architecture-view.png" style="float: right; padding: 10px">
-In Diode a <em>view</em> is a component that renders data from a model and reacts to model updates. It doesn&apos;t necessarily have to be a visual component (although it
-typically is), you could also make one to automatically store changed model data into local storage.</p>
+<p><img src="../images/architecture-view.png" style="float: right; padding: 10px"></p>
+<p>In Diode a <em>view</em> is a component that renders data from a model and reacts to model updates. It doesn&apos;t necessarily have
+to be a visual component (although it typically is), you could also make one to automatically store changed model data
+into local storage.</p>
 <h2 id="building-a-view">Building a View</h2>
 <p>A simple view needs only a <em>reader</em> to access model data, and a <em>dispatcher</em> to dispatch actions.</p>
 <pre><code class="lang-scala"><span class="token keyword">class</span> CounterView<span class="token punctuation">(</span>counter<span class="token operator">:</span> ModelR<span class="token punctuation">[</span>_<span class="token punctuation">,</span> <span class="token builtin">Int</span><span class="token punctuation">]</span><span class="token punctuation">,</span> dispatch<span class="token operator">:</span> Dispatcher<span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -334,12 +335,13 @@ typically is), you could also make one to automatically store changed model data
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<p>Using a <code>ModelR</code> instead of the actual value means we don&apos;t have to recreate the view every time the model is updated. We can create the view once in the 
-beginning and use it forever.</p>
+<p>Using a <code>ModelR</code> instead of the actual value means we don&apos;t have to recreate the view every time the model is updated.
+We can create the view once in the beginning and use it forever.</p>
 <pre><code class="lang-scala"><span class="token keyword">val</span> counter <span class="token operator">=</span> <span class="token keyword">new</span> CounterView<span class="token punctuation">(</span>AppCircuit<span class="token punctuation">.</span>zoom<span class="token punctuation">(</span>_<span class="token punctuation">.</span>counter<span class="token punctuation">)</span><span class="token punctuation">,</span> AppCircuit<span class="token punctuation">)</span>
 </code></pre>
 <p>For our directory tree we need a more complex view that supports the recursive nature of the data.</p>
-<pre><code class="lang-scala"><span class="token keyword">class</span> TreeView<span class="token punctuation">(</span>root<span class="token operator">:</span> ModelR<span class="token punctuation">[</span>_<span class="token punctuation">,</span> FileNode<span class="token punctuation">]</span><span class="token punctuation">,</span> parent<span class="token operator">:</span> Seq<span class="token punctuation">[</span><span class="token builtin">String</span><span class="token punctuation">]</span><span class="token punctuation">,</span> selection<span class="token operator">:</span> Seq<span class="token punctuation">[</span><span class="token builtin">String</span><span class="token punctuation">]</span><span class="token punctuation">,</span> dispatcher<span class="token operator">:</span> Dispatcher<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<pre><code class="lang-scala"><span class="token keyword">class</span> TreeView<span class="token punctuation">(</span>root<span class="token operator">:</span> ModelR<span class="token punctuation">[</span>_<span class="token punctuation">,</span> FileNode<span class="token punctuation">]</span><span class="token punctuation">,</span> parent<span class="token operator">:</span> Seq<span class="token punctuation">[</span><span class="token builtin">String</span><span class="token punctuation">]</span><span class="token punctuation">,</span> 
+               selection<span class="token operator">:</span> Seq<span class="token punctuation">[</span><span class="token builtin">String</span><span class="token punctuation">]</span><span class="token punctuation">,</span> dispatcher<span class="token operator">:</span> Dispatcher<span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">val</span> id <span class="token operator">=</span> root<span class="token punctuation">.</span>value<span class="token punctuation">.</span>id
   <span class="token keyword">val</span> path <span class="token operator">=</span> parent <span class="token operator">:</span><span class="token operator">+</span> id
   <span class="token keyword">val</span> childSeq <span class="token operator">=</span> build
@@ -352,8 +354,8 @@ beginning and use it forever.</p>
   <span class="token punctuation">}</span>
   <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
 </code></pre>
-<p>When creating a <code>TreeView</code>, it recursively creates a hierarchy of <code>TreeView</code> components in the <code>build</code> method. Each view gets its own reader and an updated path
-to indicate its relative position in the tree.</p>
+<p>When creating a <code>TreeView</code>, it recursively creates a hierarchy of <code>TreeView</code> components in the <code>build</code> method. Each view
+gets its own reader and an updated path to indicate its relative position in the tree.</p>
 <pre><code class="lang-scala">  <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
   <span class="token keyword">def</span> render<span class="token operator">:</span> Frag <span class="token operator">=</span> <span class="token punctuation">{</span>
     <span class="token keyword">val</span> isSelected <span class="token operator">=</span> <span class="token keyword">if</span><span class="token punctuation">(</span>selection<span class="token punctuation">.</span>nonEmpty <span class="token operator">&amp;&amp;</span> selection<span class="token punctuation">.</span>last <span class="token operator">==</span> id<span class="token punctuation">)</span> <span class="token string">&quot;active&quot;</span> <span class="token keyword">else</span> <span class="token string">&quot;&quot;</span>
@@ -372,34 +374,28 @@ to indicate its relative position in the tree.</p>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<p>In the render method the name of the node is rendered as a clickable element that dispatches a <code>Select</code> action when clicked. Currently selected node is 
-highlighted. If the node is a directory, its children are recursively rendered. </p>
+<p>In the render method the name of the node is rendered as a clickable element that dispatches a <code>Select</code> action when
+clicked. Currently selected node is highlighted. If the node is a directory, its children are recursively rendered.</p>
 <h2 id="listening-to-changes">Listening to Changes</h2>
-<p>Views should update when the model changes. To get notified, subscribe to changes using <code>Circuit.subscribe(listener)</code>. The call returns an unsubscribing
-function you can later call to stop receiving notifications.</p>
+<p>Views should update when the model changes. To get notified, subscribe to changes using
+<code>Circuit.subscribe(cursor)(listener)</code>. The call returns an unsubscribing function you can later call to stop receiving
+notifications.</p>
 <pre><code class="lang-scala"><span class="token keyword">val</span> root <span class="token operator">=</span> dom<span class="token punctuation">.</span>document<span class="token punctuation">.</span>getElementById<span class="token punctuation">(</span><span class="token string">&quot;root&quot;</span><span class="token punctuation">)</span>
-AppCircuit<span class="token punctuation">.</span>subscribe<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">=&gt;</span> render<span class="token punctuation">(</span>root<span class="token punctuation">)</span><span class="token punctuation">)</span>
-<span class="token keyword">def</span> render<span class="token punctuation">(</span>root<span class="token operator">:</span> dom<span class="token punctuation">.</span>Element<span class="token punctuation">)</span> <span class="token operator">=</span> <span class="token punctuation">{</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token punctuation">}</span>
+<span class="token keyword">val</span> unsubscribe <span class="token operator">=</span> AppCircuit<span class="token punctuation">.</span>subscribe<span class="token punctuation">(</span>AppCircuit<span class="token punctuation">.</span>zoom<span class="token punctuation">(</span>_<span class="token punctuation">.</span>tree<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">(</span>tree <span class="token keyword">=&gt;</span> render<span class="token punctuation">(</span>root<span class="token punctuation">,</span> tree<span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">def</span> render<span class="token punctuation">(</span>root<span class="token operator">:</span> dom<span class="token punctuation">.</span>Element<span class="token punctuation">,</span> tree<span class="token operator">:</span> ModelR<span class="token punctuation">[</span>_<span class="token punctuation">,</span> Tree<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">=</span> <span class="token punctuation">{</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token punctuation">}</span>
 </code></pre>
-<p>Listeners are called when <em>anything</em> in the model changes, even if it has no effect in the part of the model your view is interested in. Therefore it makes
-sense to check if a real change has happened, before doing expensive re-computations.</p>
+<p>Listeners are called when the model pointed by the cursor changes, even if it would have no effect in the part of the
+model your view is interested in. Therefore it makes sense to check if a real change has happened, before doing
+expensive re-computations.</p>
 <pre><code class="lang-scala"><span class="token comment" spellcheck="true">// rebuild the tree view if the model has changed</span>
-<span class="token keyword">if</span><span class="token punctuation">(</span>AppCircuit<span class="token punctuation">.</span>zoom<span class="token punctuation">(</span>_<span class="token punctuation">.</span>tree<span class="token punctuation">.</span>root<span class="token punctuation">)</span><span class="token punctuation">.</span>value ne currentModel<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-  currentModel <span class="token operator">=</span> AppCircuit<span class="token punctuation">.</span>zoom<span class="token punctuation">(</span>_<span class="token punctuation">.</span>tree<span class="token punctuation">.</span>root<span class="token punctuation">)</span><span class="token punctuation">.</span>value
-  treeView <span class="token operator">=</span> <span class="token keyword">new</span> TreeView<span class="token punctuation">(</span>AppCircuit<span class="token punctuation">.</span>zoom<span class="token punctuation">(</span>_<span class="token punctuation">.</span>tree<span class="token punctuation">.</span>root<span class="token punctuation">)</span><span class="token punctuation">,</span> Seq<span class="token punctuation">.</span>empty<span class="token punctuation">,</span> AppCircuit<span class="token punctuation">.</span>zoom<span class="token punctuation">(</span>_<span class="token punctuation">.</span>tree<span class="token punctuation">.</span>selected<span class="token punctuation">)</span><span class="token punctuation">,</span> AppCircuit<span class="token punctuation">)</span>
+<span class="token keyword">val</span> dirRoot<span class="token operator">:</span> ModelR<span class="token punctuation">[</span>_<span class="token punctuation">,</span> FileNode<span class="token punctuation">]</span> <span class="token operator">=</span> tree<span class="token punctuation">.</span>zoom<span class="token punctuation">(</span>_<span class="token punctuation">.</span>root<span class="token punctuation">)</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span>dirRoot <span class="token operator">=</span><span class="token operator">!=</span> currentModel<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  currentModel <span class="token operator">=</span> dirRoot<span class="token punctuation">.</span>value
+  treeView <span class="token operator">=</span> <span class="token keyword">new</span> TreeView<span class="token punctuation">(</span>dirRoot<span class="token punctuation">,</span> Seq<span class="token punctuation">.</span>empty<span class="token punctuation">,</span> tree<span class="token punctuation">.</span>zoom<span class="token punctuation">(</span>_<span class="token punctuation">.</span>selected<span class="token punctuation">)</span><span class="token punctuation">,</span> AppCircuit<span class="token punctuation">)</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<p>If only <code>selected</code> is changed, we don&apos;t need to rebuild the tree as its structure has stayed the same. We do, however, need to re-render the tree to reflect
-this change.</p>
-<h3 id="listening-to-partial-changes">Listening to partial Changes</h3>
-<p>If your view is only interested in a small part of the model, you can register a listener to be called only when that part changes. To indicate what you are
-interested in, supply a <em>cursor</em> function (<code>(M) =&gt; AnyRef</code>). This cursor function returns a part of the model for reference equality checking. </p>
-<pre><code class="lang-scala">AppCircuit<span class="token punctuation">.</span>subscribe<span class="token punctuation">(</span>listener<span class="token punctuation">,</span> _<span class="token punctuation">.</span>tree<span class="token punctuation">.</span>root<span class="token punctuation">)</span>
-</code></pre>
-<p>Note that you cannot transform the values with, for example, <code>Option.map</code> because they must return the original reference within the model. If you do have an
-<code>Option</code> in your path, use <code>getOrNull</code> to get the underlying value.</p>
-<pre><code class="lang-scala">AppCircuit<span class="token punctuation">.</span>subscribe<span class="token punctuation">(</span>listener<span class="token punctuation">,</span> _<span class="token punctuation">.</span>optValue<span class="token punctuation">.</span>map<span class="token punctuation">(</span>_<span class="token punctuation">.</span>data<span class="token punctuation">)</span><span class="token punctuation">.</span>getOrNull<span class="token punctuation">)</span>
-</code></pre>
+<p>If only <code>selected</code> is changed, we don&apos;t need to rebuild the tree as its structure has stayed the same. We do, however,
+need to re-render the tree to reflect this change.</p>
 
                     
                     </section>
