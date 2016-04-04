@@ -1154,7 +1154,10 @@ function $asArrayOf_sc_GenTraversableOnce(obj, depth) {
 /** @constructor */
 function $c_Ldiode_ActionHandler() {
   $c_O.call(this);
-  this.modelRW$1 = null
+  this.modelRW$1 = null;
+  this.currentModel$1 = null;
+  this.liftedHandler$1 = null;
+  this.bitmap$0$1 = false
 }
 $c_Ldiode_ActionHandler.prototype = new $h_O();
 $c_Ldiode_ActionHandler.prototype.constructor = $c_Ldiode_ActionHandler;
@@ -1163,43 +1166,79 @@ function $h_Ldiode_ActionHandler() {
   /*<skip>*/
 }
 $h_Ldiode_ActionHandler.prototype = $c_Ldiode_ActionHandler.prototype;
+$c_Ldiode_ActionHandler.prototype.handleAction__O__O__s_Option = (function(model, action) {
+  this.currentModel$1 = model;
+  return $as_s_Option(this.liftedHandler__F1().apply__O__O(action))
+});
+$c_Ldiode_ActionHandler.prototype.liftedHandler__F1 = (function() {
+  return ((!this.bitmap$0$1) ? this.liftedHandler$lzycompute__p1__F1() : this.liftedHandler$1)
+});
+$c_Ldiode_ActionHandler.prototype.liftedHandler$lzycompute__p1__F1 = (function() {
+  if ((!this.bitmap$0$1)) {
+    var this$1 = new $c_Lexample_AppCircuit$$anon$1$$anonfun$handle$1().init___Lexample_AppCircuit$$anon$1(this);
+    this.liftedHandler$1 = new $c_s_PartialFunction$Lifted().init___s_PartialFunction(this$1);
+    this.bitmap$0$1 = true
+  };
+  return this.liftedHandler$1
+});
 $c_Ldiode_ActionHandler.prototype.init___Ldiode_ModelRW = (function(modelRW) {
   this.modelRW$1 = modelRW;
+  this.currentModel$1 = modelRW.root__Ldiode_ModelR().value__O();
   return this
 });
 $c_Ldiode_ActionHandler.prototype.updated__O__Ldiode_ActionResult = (function(newValue) {
-  var this$1 = this.modelRW$1;
-  return new $c_Ldiode_ActionResult$ModelUpdate().init___O($s_Ldiode_BaseModelRW$class__updated__Ldiode_BaseModelRW__O__O(this$1, newValue))
+  return new $c_Ldiode_ActionResult$ModelUpdate().init___O(this.modelRW$1.updatedWith__O__O__O(this.currentModel$1, newValue))
 });
-function $is_Ldiode_ActionHandler(obj) {
-  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Ldiode_ActionHandler)))
+/** @constructor */
+function $c_Ldiode_ActionHandler$() {
+  $c_O.call(this)
 }
-function $as_Ldiode_ActionHandler(obj) {
-  return (($is_Ldiode_ActionHandler(obj) || (obj === null)) ? obj : $throwClassCastException(obj, "diode.ActionHandler"))
+$c_Ldiode_ActionHandler$.prototype = new $h_O();
+$c_Ldiode_ActionHandler$.prototype.constructor = $c_Ldiode_ActionHandler$;
+/** @constructor */
+function $h_Ldiode_ActionHandler$() {
+  /*<skip>*/
 }
-function $isArrayOf_Ldiode_ActionHandler(obj, depth) {
-  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Ldiode_ActionHandler)))
-}
-function $asArrayOf_Ldiode_ActionHandler(obj, depth) {
-  return (($isArrayOf_Ldiode_ActionHandler(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Ldiode.ActionHandler;", depth))
+$h_Ldiode_ActionHandler$.prototype = $c_Ldiode_ActionHandler$.prototype;
+$c_Ldiode_ActionHandler$.prototype.init___ = (function() {
+  return this
+});
+$c_Ldiode_ActionHandler$.prototype.extractHandler__Ldiode_ActionHandler__F2 = (function(actionHandler) {
+  return new $c_sjsr_AnonFunction2().init___sjs_js_Function2((function(actionHandler$1) {
+    return (function(model$2, action$2) {
+      return actionHandler$1.handleAction__O__O__s_Option(model$2, action$2)
+    })
+  })(actionHandler))
+});
+var $d_Ldiode_ActionHandler$ = new $TypeData().initClass({
+  Ldiode_ActionHandler$: 0
+}, false, "diode.ActionHandler$", {
+  Ldiode_ActionHandler$: 1,
+  O: 1
+});
+$c_Ldiode_ActionHandler$.prototype.$classData = $d_Ldiode_ActionHandler$;
+var $n_Ldiode_ActionHandler$ = (void 0);
+function $m_Ldiode_ActionHandler$() {
+  if ((!$n_Ldiode_ActionHandler$)) {
+    $n_Ldiode_ActionHandler$ = new $c_Ldiode_ActionHandler$().init___()
+  };
+  return $n_Ldiode_ActionHandler$
 }
 function $s_Ldiode_BaseModelR$class__zoom__Ldiode_BaseModelR__F1__Ldiode_FastEq__Ldiode_ZoomModelR($$this, get, feq) {
   var jsx$1 = $$this.root__Ldiode_ModelR();
   var g = new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer) {
     return (function(model$2) {
-      return arg$outer.getF__O__O(model$2)
+      return arg$outer.eval__O__O(model$2)
     })
   })($$this));
   return new $c_Ldiode_ZoomModelR().init___Ldiode_ModelR__F1__Ldiode_FastEq(jsx$1, $s_s_Function1$class__compose__F1__F1__F1(get, g), feq)
 }
 function $s_Ldiode_BaseModelR$class__value__Ldiode_BaseModelR__O($$this) {
-  return $$this.getF__O__O($$this.root__Ldiode_ModelR().value__O())
-}
-function $s_Ldiode_BaseModelRW$class__updated__Ldiode_BaseModelRW__O__O($$this, newValue) {
-  return $$this.setF__O__O__O($$this.root__Ldiode_ModelR().value__O(), newValue)
+  return $$this.eval__O__O($$this.root__Ldiode_ModelR().value__O())
 }
 function $s_Ldiode_Circuit$class__diode$Circuit$$process__Ldiode_Circuit__O__Ldiode_ActionResult($$this, action) {
-  return $as_Ldiode_ActionResult($$this.actionHandler$1.orElse__s_PartialFunction__s_PartialFunction($$this.diode$Circuit$$baseHandler$1).apply__O__O(action))
+  var this$1 = $as_s_Option($$this.actionHandler$1.apply__O__O__O($$this.model$1, action));
+  return $as_Ldiode_ActionResult((this$1.isEmpty__Z() ? $s_Ldiode_Circuit$class__diode$Circuit$$baseHandler__Ldiode_Circuit__O__Ldiode_ActionResult$NoChange$($$this, action) : this$1.get__O()))
 }
 function $s_Ldiode_Circuit$class__update__p0__Ldiode_Circuit__O__V($$this, newModel) {
   if ((newModel !== $$this.model$1)) {
@@ -1216,8 +1255,7 @@ function $s_Ldiode_Circuit$class__$$init$__Ldiode_Circuit__V($$this) {
   $$this.diode$Circuit$$listenerId$1 = 0;
   $$this.diode$Circuit$$listeners$1 = $m_sci_Map$EmptyMap$();
   $$this.diode$Circuit$$processors$1 = ($m_sci_List$(), $m_sci_Nil$());
-  $$this.diode$Circuit$$processChain$1 = $s_Ldiode_Circuit$class__buildProcessChain__p0__Ldiode_Circuit__F1($$this);
-  $$this.diode$Circuit$$baseHandler$1 = new $c_Ldiode_Circuit$$anonfun$1().init___Ldiode_Circuit($$this)
+  $$this.diode$Circuit$$processChain$1 = $s_Ldiode_Circuit$class__buildProcessChain__p0__Ldiode_Circuit__F1($$this)
 }
 function $s_Ldiode_Circuit$class__dispatch__Ldiode_Circuit__O__V($$this, action) {
   if (($$this === null)) {
@@ -1228,27 +1266,27 @@ function $s_Ldiode_Circuit$class__dispatch__Ldiode_Circuit__O__V($$this, action)
   if ((oldModel !== $$this.model$1)) {
     var this$1 = $$this.diode$Circuit$$listeners$1;
     var z = $$this.diode$Circuit$$listeners$1;
-    var op = new $c_sjsr_AnonFunction2().init___sjs_js_Function2((function(x0$1$2, x1$1$2) {
-      var x0$1 = $as_sci_Map(x0$1$2);
-      var x1$1 = $as_T2(x1$1$2);
-      var x1 = new $c_T2().init___O__O(x0$1, x1$1);
+    var op = new $c_sjsr_AnonFunction2().init___sjs_js_Function2((function(x0$2$2, x1$2$2) {
+      var x0$2 = $as_sci_Map(x0$2$2);
+      var x1$2 = $as_T2(x1$2$2);
+      var x1 = new $c_T2().init___O__O(x0$2, x1$2);
       var l = $as_sci_Map(x1.$$und1$f);
       var p2 = $as_T2(x1.$$und2$f);
       if ((p2 !== null)) {
         var key = p2.$$und1$mcI$sp__I();
         var sub = $as_Ldiode_Circuit$Subscription(p2.$$und2__O());
-        var x1$2 = sub.changed__s_Option();
-        if ($is_s_Some(x1$2)) {
-          var x2 = $as_s_Some(x1$2);
+        var x1$3 = sub.changed__s_Option();
+        if ($is_s_Some(x1$3)) {
+          var x2 = $as_s_Some(x1$3);
           var newSub = $as_Ldiode_Circuit$Subscription(x2.x$2);
           sub.listener$1.apply__O__O(sub.cursor$1);
           return l.updated__O__O__sci_Map(key, newSub)
         } else {
           var x = $m_s_None$();
-          if ((x === x1$2)) {
+          if ((x === x1$3)) {
             return l
           } else {
-            throw new $c_s_MatchError().init___O(x1$2)
+            throw new $c_s_MatchError().init___O(x1$3)
           }
         }
       };
@@ -1292,11 +1330,11 @@ function $s_Ldiode_Circuit$class__dispatchBase__Ldiode_Circuit__O__V($$this, act
     if ((!(x === x1))) {
       if ($is_Ldiode_ActionResult$ModelUpdate(x1)) {
         var x2 = $as_Ldiode_ActionResult$ModelUpdate(x1);
-        var newModel = x2.newValue$1;
+        var newModel = x2.newModel$1;
         $s_Ldiode_Circuit$class__update__p0__Ldiode_Circuit__O__V($$this, newModel)
       } else if ($is_Ldiode_ActionResult$EffectOnly(x1)) {
         var x3 = $as_Ldiode_ActionResult$EffectOnly(x1);
-        var effects = x3.effects__Ldiode_Effect();
+        var effects = x3.effect__Ldiode_Effect();
         effects.run__F1__s_concurrent_Future(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer) {
           return (function(action$2) {
             $s_Ldiode_Circuit$class__dispatch__Ldiode_Circuit__O__V(arg$outer, action$2)
@@ -1304,8 +1342,8 @@ function $s_Ldiode_Circuit$class__dispatchBase__Ldiode_Circuit__O__V($$this, act
         })($$this))).recover__s_PartialFunction__s_concurrent_ExecutionContext__s_concurrent_Future(new $c_Ldiode_Circuit$$anonfun$dispatchBase$1().init___Ldiode_Circuit__O($$this, action), effects.ec__s_concurrent_ExecutionContext())
       } else if ($is_Ldiode_ActionResult$ModelUpdateEffect(x1)) {
         var x4 = $as_Ldiode_ActionResult$ModelUpdateEffect(x1);
-        var newModel$2 = x4.newValue__O();
-        var effects$2 = x4.effects__Ldiode_Effect();
+        var newModel$2 = x4.newModel__O();
+        var effects$2 = x4.effect__Ldiode_Effect();
         $s_Ldiode_Circuit$class__update__p0__Ldiode_Circuit__O__V($$this, newModel$2);
         effects$2.run__F1__s_concurrent_Future(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer$1) {
           return (function(action$2$1) {
@@ -1327,6 +1365,25 @@ function $s_Ldiode_Circuit$class__dispatchBase__Ldiode_Circuit__O__V($$this, act
 }
 function $s_Ldiode_Circuit$class__handleFatal__Ldiode_Circuit__O__jl_Throwable__V($$this, action, e) {
   throw $m_sjsr_package$().unwrapJavaScriptException__jl_Throwable__O(e)
+}
+function $s_Ldiode_Circuit$class__diode$Circuit$$baseHandler__Ldiode_Circuit__O__Ldiode_ActionResult$NoChange$($$this, action) {
+  if ($is_sc_Seq(action)) {
+    var x2 = $as_sc_Seq(action);
+    x2.foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer) {
+      return (function(action$2) {
+        $s_Ldiode_Circuit$class__dispatchBase__Ldiode_Circuit__O__V(arg$outer, action$2)
+      })
+    })($$this)));
+    return $m_Ldiode_ActionResult$NoChange$()
+  } else {
+    var x = $m_s_None$();
+    if ((x === action)) {
+      return $m_Ldiode_ActionResult$NoChange$()
+    } else {
+      new $c_s_StringContext().init___sc_Seq(new $c_sjs_js_WrappedArray().init___sjs_js_Array(["Action ", " was not handled by any action handler"])).s__sc_Seq__T(new $c_sjs_js_WrappedArray().init___sjs_js_Array([action]));
+      return $m_Ldiode_ActionResult$NoChange$()
+    }
+  }
 }
 /** @constructor */
 function $c_Lexample_CounterView() {
@@ -2393,18 +2450,6 @@ function $h_s_LowPriorityImplicits() {
   /*<skip>*/
 }
 $h_s_LowPriorityImplicits.prototype = $c_s_LowPriorityImplicits.prototype;
-function $is_s_PartialFunction(obj) {
-  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.s_PartialFunction)))
-}
-function $as_s_PartialFunction(obj) {
-  return (($is_s_PartialFunction(obj) || (obj === null)) ? obj : $throwClassCastException(obj, "scala.PartialFunction"))
-}
-function $isArrayOf_s_PartialFunction(obj, depth) {
-  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.s_PartialFunction)))
-}
-function $asArrayOf_s_PartialFunction(obj, depth) {
-  return (($isArrayOf_s_PartialFunction(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Lscala.PartialFunction;", depth))
-}
 /** @constructor */
 function $c_s_PartialFunction$() {
   $c_O.call(this);
@@ -6085,9 +6130,6 @@ $c_Ldiode_RootModelR.prototype.init___F0 = (function(get) {
 $c_Ldiode_RootModelR.prototype.value__O = (function() {
   return this.get$1.apply__O()
 });
-$c_Ldiode_RootModelR.prototype.getF__O__O = (function(model) {
-  return this.get$1.apply__O()
-});
 $c_Ldiode_RootModelR.prototype.root__Ldiode_ModelR = (function() {
   return this
 });
@@ -6114,14 +6156,11 @@ $h_Ldiode_ZoomModelR.prototype = $c_Ldiode_ZoomModelR.prototype;
 $c_Ldiode_ZoomModelR.prototype.value__O = (function() {
   return $s_Ldiode_BaseModelR$class__value__Ldiode_BaseModelR__O(this)
 });
-$c_Ldiode_ZoomModelR.prototype.getF__O__O = (function(model) {
-  return this.get$1.apply__O__O(model)
-});
 $c_Ldiode_ZoomModelR.prototype.root__Ldiode_ModelR = (function() {
   return this.root$1
 });
 $c_Ldiode_ZoomModelR.prototype.eval__O__O = (function(model) {
-  return this.getF__O__O(model)
+  return this.get$1.apply__O__O(model)
 });
 $c_Ldiode_ZoomModelR.prototype.init___Ldiode_ModelR__F1__Ldiode_FastEq = (function(root, get, feq) {
   this.root$1 = root;
@@ -6152,7 +6191,6 @@ function $c_Lexample_AppCircuit$() {
   this.diode$Circuit$$listeners$1 = null;
   this.diode$Circuit$$processors$1 = null;
   this.diode$Circuit$$processChain$1 = null;
-  this.diode$Circuit$$baseHandler$1 = null;
   this.diode$Circuit$$Subscription$module$1 = null
 }
 $c_Lexample_AppCircuit$.prototype = new $h_O();
@@ -6166,32 +6204,7 @@ $c_Lexample_AppCircuit$.prototype.init___ = (function() {
   $n_Lexample_AppCircuit$ = this;
   $s_Ldiode_Circuit$class__$$init$__Ldiode_Circuit__V(this);
   this.counterHandler$1 = new $c_Lexample_AppCircuit$$anon$1().init___();
-  var array = [this.counterHandler$1];
-  var z = $m_s_PartialFunction$().empty$undpf$1;
-  var start = 0;
-  var end = $uI(array.length);
-  var z$1 = z;
-  x: {
-    var jsx$1;
-    _foldl: while (true) {
-      if ((start === end)) {
-        var jsx$1 = z$1;
-        break x
-      } else {
-        var temp$start = ((1 + start) | 0);
-        var arg1 = z$1;
-        var index = start;
-        var arg2 = array[index];
-        var a = $as_s_PartialFunction(arg1);
-        var b = $as_Ldiode_ActionHandler(arg2);
-        var temp$z = a.orElse__s_PartialFunction__s_PartialFunction(new $c_Lexample_AppCircuit$$anon$1$$anonfun$handle$1().init___Lexample_AppCircuit$$anon$1(b));
-        start = temp$start;
-        z$1 = temp$z;
-        continue _foldl
-      }
-    }
-  };
-  this.actionHandler$1 = $as_s_PartialFunction(jsx$1);
+  this.actionHandler$1 = $m_Ldiode_ActionHandler$().extractHandler__Ldiode_ActionHandler__F2(this.counterHandler$1);
   return this
 });
 var $d_Lexample_AppCircuit$ = new $TypeData().initClass({
@@ -6704,9 +6717,6 @@ $c_s_PartialFunction$$anon$1.prototype.apply__O__O = (function(v1) {
 $c_s_PartialFunction$$anon$1.prototype.toString__T = (function() {
   return "<function1>"
 });
-$c_s_PartialFunction$$anon$1.prototype.orElse__s_PartialFunction__s_PartialFunction = (function(that) {
-  return that
-});
 $c_s_PartialFunction$$anon$1.prototype.isDefinedAt__O__Z = (function(x) {
   return false
 });
@@ -6726,51 +6736,37 @@ var $d_s_PartialFunction$$anon$1 = new $TypeData().initClass({
 });
 $c_s_PartialFunction$$anon$1.prototype.$classData = $d_s_PartialFunction$$anon$1;
 /** @constructor */
-function $c_s_PartialFunction$OrElse() {
-  $c_O.call(this);
-  this.f1$1 = null;
-  this.f2$1 = null
+function $c_s_PartialFunction$Lifted() {
+  $c_sr_AbstractFunction1.call(this);
+  this.pf$2 = null
 }
-$c_s_PartialFunction$OrElse.prototype = new $h_O();
-$c_s_PartialFunction$OrElse.prototype.constructor = $c_s_PartialFunction$OrElse;
+$c_s_PartialFunction$Lifted.prototype = new $h_sr_AbstractFunction1();
+$c_s_PartialFunction$Lifted.prototype.constructor = $c_s_PartialFunction$Lifted;
 /** @constructor */
-function $h_s_PartialFunction$OrElse() {
+function $h_s_PartialFunction$Lifted() {
   /*<skip>*/
 }
-$h_s_PartialFunction$OrElse.prototype = $c_s_PartialFunction$OrElse.prototype;
-$c_s_PartialFunction$OrElse.prototype.apply__O__O = (function(x) {
-  return this.f1$1.applyOrElse__O__F1__O(x, this.f2$1)
+$h_s_PartialFunction$Lifted.prototype = $c_s_PartialFunction$Lifted.prototype;
+$c_s_PartialFunction$Lifted.prototype.apply__O__O = (function(v1) {
+  return this.apply__O__s_Option(v1)
 });
-$c_s_PartialFunction$OrElse.prototype.orElse__s_PartialFunction__s_PartialFunction$OrElse = (function(that) {
-  return new $c_s_PartialFunction$OrElse().init___s_PartialFunction__s_PartialFunction(this.f1$1, this.f2$1.orElse__s_PartialFunction__s_PartialFunction(that))
-});
-$c_s_PartialFunction$OrElse.prototype.toString__T = (function() {
-  return "<function1>"
-});
-$c_s_PartialFunction$OrElse.prototype.orElse__s_PartialFunction__s_PartialFunction = (function(that) {
-  return this.orElse__s_PartialFunction__s_PartialFunction$OrElse(that)
-});
-$c_s_PartialFunction$OrElse.prototype.isDefinedAt__O__Z = (function(x) {
-  return (this.f1$1.isDefinedAt__O__Z(x) || this.f2$1.isDefinedAt__O__Z(x))
-});
-$c_s_PartialFunction$OrElse.prototype.applyOrElse__O__F1__O = (function(x, $default) {
-  var z = this.f1$1.applyOrElse__O__F1__O(x, $m_s_PartialFunction$().scala$PartialFunction$$fallback$undpf$f);
-  return ((!$m_s_PartialFunction$().scala$PartialFunction$$fallbackOccurred__O__Z(z)) ? z : this.f2$1.applyOrElse__O__F1__O(x, $default))
-});
-$c_s_PartialFunction$OrElse.prototype.init___s_PartialFunction__s_PartialFunction = (function(f1, f2) {
-  this.f1$1 = f1;
-  this.f2$1 = f2;
+$c_s_PartialFunction$Lifted.prototype.init___s_PartialFunction = (function(pf) {
+  this.pf$2 = pf;
   return this
 });
-var $d_s_PartialFunction$OrElse = new $TypeData().initClass({
-  s_PartialFunction$OrElse: 0
-}, false, "scala.PartialFunction$OrElse", {
-  s_PartialFunction$OrElse: 1,
+$c_s_PartialFunction$Lifted.prototype.apply__O__s_Option = (function(x) {
+  var z = this.pf$2.applyOrElse__O__F1__O(x, $m_s_PartialFunction$().scala$PartialFunction$$fallback$undpf$f);
+  return ((!$m_s_PartialFunction$().scala$PartialFunction$$fallbackOccurred__O__Z(z)) ? new $c_s_Some().init___O(z) : $m_s_None$())
+});
+var $d_s_PartialFunction$Lifted = new $TypeData().initClass({
+  s_PartialFunction$Lifted: 0
+}, false, "scala.PartialFunction$Lifted", {
+  s_PartialFunction$Lifted: 1,
+  sr_AbstractFunction1: 1,
   O: 1,
-  s_PartialFunction: 1,
   F1: 1
 });
-$c_s_PartialFunction$OrElse.prototype.$classData = $d_s_PartialFunction$OrElse;
+$c_s_PartialFunction$Lifted.prototype.$classData = $d_s_PartialFunction$Lifted;
 /** @constructor */
 function $c_s_Predef$() {
   $c_s_LowPriorityImplicits.call(this);
@@ -7644,9 +7640,6 @@ $c_sr_AbstractPartialFunction.prototype.apply__O__O = (function(x) {
 });
 $c_sr_AbstractPartialFunction.prototype.toString__T = (function() {
   return "<function1>"
-});
-$c_sr_AbstractPartialFunction.prototype.orElse__s_PartialFunction__s_PartialFunction = (function(that) {
-  return new $c_s_PartialFunction$OrElse().init___s_PartialFunction__s_PartialFunction(this, that)
 });
 var $d_sr_Nothing$ = new $TypeData().initClass({
   sr_Nothing$: 0
@@ -9945,6 +9938,18 @@ $h_s_Option.prototype = $c_s_Option.prototype;
 $c_s_Option.prototype.isDefined__Z = (function() {
   return (!this.isEmpty__Z())
 });
+function $is_s_Option(obj) {
+  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.s_Option)))
+}
+function $as_s_Option(obj) {
+  return (($is_s_Option(obj) || (obj === null)) ? obj : $throwClassCastException(obj, "scala.Option"))
+}
+function $isArrayOf_s_Option(obj, depth) {
+  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.s_Option)))
+}
+function $asArrayOf_s_Option(obj, depth) {
+  return (($isArrayOf_s_Option(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Lscala.Option;", depth))
+}
 /** @constructor */
 function $c_s_Predef$$anon$1() {
   $c_s_Predef$$less$colon$less.call(this)
@@ -11061,18 +11066,6 @@ var $d_sr_ScalaRunTime$$anon$1 = new $TypeData().initClass({
   sc_GenTraversableOnce: 1
 });
 $c_sr_ScalaRunTime$$anon$1.prototype.$classData = $d_sr_ScalaRunTime$$anon$1;
-function $is_Ldiode_ActionResult$EffectOnly(obj) {
-  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Ldiode_ActionResult$EffectOnly)))
-}
-function $as_Ldiode_ActionResult$EffectOnly(obj) {
-  return (($is_Ldiode_ActionResult$EffectOnly(obj) || (obj === null)) ? obj : $throwClassCastException(obj, "diode.ActionResult$EffectOnly"))
-}
-function $isArrayOf_Ldiode_ActionResult$EffectOnly(obj, depth) {
-  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Ldiode_ActionResult$EffectOnly)))
-}
-function $asArrayOf_Ldiode_ActionResult$EffectOnly(obj, depth) {
-  return (($isArrayOf_Ldiode_ActionResult$EffectOnly(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Ldiode.ActionResult$EffectOnly;", depth))
-}
 /** @constructor */
 function $c_Ldiode_ActionResult$NoChange$() {
   $c_O.call(this)
@@ -11125,70 +11118,10 @@ function $m_Ldiode_ActionResult$NoChange$() {
   return $n_Ldiode_ActionResult$NoChange$
 }
 /** @constructor */
-function $c_Ldiode_Circuit$$anonfun$1() {
-  $c_sr_AbstractPartialFunction.call(this);
-  this.$$outer$2 = null
-}
-$c_Ldiode_Circuit$$anonfun$1.prototype = new $h_sr_AbstractPartialFunction();
-$c_Ldiode_Circuit$$anonfun$1.prototype.constructor = $c_Ldiode_Circuit$$anonfun$1;
-/** @constructor */
-function $h_Ldiode_Circuit$$anonfun$1() {
-  /*<skip>*/
-}
-$h_Ldiode_Circuit$$anonfun$1.prototype = $c_Ldiode_Circuit$$anonfun$1.prototype;
-$c_Ldiode_Circuit$$anonfun$1.prototype.init___Ldiode_Circuit = (function($$outer) {
-  if (($$outer === null)) {
-    throw $m_sjsr_package$().unwrapJavaScriptException__jl_Throwable__O(null)
-  } else {
-    this.$$outer$2 = $$outer
-  };
-  return this
-});
-$c_Ldiode_Circuit$$anonfun$1.prototype.isDefinedAt__O__Z = (function(x1) {
-  if ($is_sc_Seq(x1)) {
-    return true
-  } else {
-    var x = $m_s_None$();
-    return true
-  }
-});
-$c_Ldiode_Circuit$$anonfun$1.prototype.applyOrElse__O__F1__O = (function(x1, $default) {
-  if ($is_sc_Seq(x1)) {
-    var x2 = $as_sc_Seq(x1);
-    x2.foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function(arg$outer) {
-      return (function(action$2) {
-        var this$1 = arg$outer.$$outer$2;
-        $s_Ldiode_Circuit$class__dispatchBase__Ldiode_Circuit__O__V(this$1, action$2)
-      })
-    })(this)));
-    return $m_Ldiode_ActionResult$NoChange$()
-  } else {
-    var x = $m_s_None$();
-    if ((x === x1)) {
-      return $m_Ldiode_ActionResult$NoChange$()
-    } else {
-      new $c_s_StringContext().init___sc_Seq(new $c_sjs_js_WrappedArray().init___sjs_js_Array(["Action ", " was not handled by any action handler"])).s__sc_Seq__T(new $c_sjs_js_WrappedArray().init___sjs_js_Array([x1]));
-      return $m_Ldiode_ActionResult$NoChange$()
-    }
-  }
-});
-var $d_Ldiode_Circuit$$anonfun$1 = new $TypeData().initClass({
-  Ldiode_Circuit$$anonfun$1: 0
-}, false, "diode.Circuit$$anonfun$1", {
-  Ldiode_Circuit$$anonfun$1: 1,
-  sr_AbstractPartialFunction: 1,
-  O: 1,
-  F1: 1,
-  s_PartialFunction: 1,
-  s_Serializable: 1,
-  Ljava_io_Serializable: 1
-});
-$c_Ldiode_Circuit$$anonfun$1.prototype.$classData = $d_Ldiode_Circuit$$anonfun$1;
-/** @constructor */
 function $c_Ldiode_Circuit$$anonfun$dispatchBase$1() {
   $c_sr_AbstractPartialFunction.call(this);
   this.$$outer$2 = null;
-  this.action$1$2 = null
+  this.action$4$2 = null
 }
 $c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype = new $h_sr_AbstractPartialFunction();
 $c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype.constructor = $c_Ldiode_Circuit$$anonfun$dispatchBase$1;
@@ -11197,22 +11130,22 @@ function $h_Ldiode_Circuit$$anonfun$dispatchBase$1() {
   /*<skip>*/
 }
 $h_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype = $c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype;
-$c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype.isDefinedAt__jl_Throwable__Z = (function(x2) {
-  return (x2 !== null)
+$c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype.isDefinedAt__jl_Throwable__Z = (function(x1) {
+  return (x1 !== null)
 });
-$c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype.applyOrElse__jl_Throwable__F1__O = (function(x2, $default) {
-  return ((x2 !== null) ? (new $c_s_StringContext().init___sc_Seq(new $c_sjs_js_WrappedArray().init___sjs_js_Array(["Error in processing effects for action ", ": ", ""])).s__sc_Seq__T(new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.action$1$2, x2])), (void 0)) : $default.apply__O__O(x2))
+$c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype.applyOrElse__jl_Throwable__F1__O = (function(x1, $default) {
+  return ((x1 !== null) ? (new $c_s_StringContext().init___sc_Seq(new $c_sjs_js_WrappedArray().init___sjs_js_Array(["Error in processing effects for action ", ": ", ""])).s__sc_Seq__T(new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.action$4$2, x1])), (void 0)) : $default.apply__O__O(x1))
 });
 $c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype.isDefinedAt__O__Z = (function(x) {
   return this.isDefinedAt__jl_Throwable__Z($as_jl_Throwable(x))
 });
-$c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype.init___Ldiode_Circuit__O = (function($$outer, action$1) {
+$c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype.init___Ldiode_Circuit__O = (function($$outer, action$4) {
   if (($$outer === null)) {
     throw $m_sjsr_package$().unwrapJavaScriptException__jl_Throwable__O(null)
   } else {
     this.$$outer$2 = $$outer
   };
-  this.action$1$2 = action$1;
+  this.action$4$2 = action$4;
   return this
 });
 $c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype.applyOrElse__O__F1__O = (function(x, $default) {
@@ -11234,7 +11167,7 @@ $c_Ldiode_Circuit$$anonfun$dispatchBase$1.prototype.$classData = $d_Ldiode_Circu
 function $c_Ldiode_Circuit$$anonfun$dispatchBase$2() {
   $c_sr_AbstractPartialFunction.call(this);
   this.$$outer$2 = null;
-  this.action$1$2 = null
+  this.action$4$2 = null
 }
 $c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype = new $h_sr_AbstractPartialFunction();
 $c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype.constructor = $c_Ldiode_Circuit$$anonfun$dispatchBase$2;
@@ -11243,22 +11176,22 @@ function $h_Ldiode_Circuit$$anonfun$dispatchBase$2() {
   /*<skip>*/
 }
 $h_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype = $c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype;
-$c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype.isDefinedAt__jl_Throwable__Z = (function(x3) {
-  return (x3 !== null)
+$c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype.isDefinedAt__jl_Throwable__Z = (function(x2) {
+  return (x2 !== null)
 });
-$c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype.applyOrElse__jl_Throwable__F1__O = (function(x3, $default) {
-  return ((x3 !== null) ? (new $c_s_StringContext().init___sc_Seq(new $c_sjs_js_WrappedArray().init___sjs_js_Array(["Error in processing effects for action ", ": ", ""])).s__sc_Seq__T(new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.action$1$2, x3])), (void 0)) : $default.apply__O__O(x3))
+$c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype.applyOrElse__jl_Throwable__F1__O = (function(x2, $default) {
+  return ((x2 !== null) ? (new $c_s_StringContext().init___sc_Seq(new $c_sjs_js_WrappedArray().init___sjs_js_Array(["Error in processing effects for action ", ": ", ""])).s__sc_Seq__T(new $c_sjs_js_WrappedArray().init___sjs_js_Array([this.action$4$2, x2])), (void 0)) : $default.apply__O__O(x2))
 });
 $c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype.isDefinedAt__O__Z = (function(x) {
   return this.isDefinedAt__jl_Throwable__Z($as_jl_Throwable(x))
 });
-$c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype.init___Ldiode_Circuit__O = (function($$outer, action$1) {
+$c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype.init___Ldiode_Circuit__O = (function($$outer, action$4) {
   if (($$outer === null)) {
     throw $m_sjsr_package$().unwrapJavaScriptException__jl_Throwable__O(null)
   } else {
     this.$$outer$2 = $$outer
   };
-  this.action$1$2 = action$1;
+  this.action$4$2 = action$4;
   return this
 });
 $c_Ldiode_Circuit$$anonfun$dispatchBase$2.prototype.applyOrElse__O__F1__O = (function(x, $default) {
@@ -11298,7 +11231,7 @@ $c_Ldiode_RootModelRW.prototype.zoomRW__F1__F2__Ldiode_FastEq__Ldiode_ZoomModelR
     })
   })(this, set)), feq)
 });
-$c_Ldiode_RootModelRW.prototype.setF__O__O__O = (function(model, value) {
+$c_Ldiode_RootModelRW.prototype.updatedWith__O__O__O = (function(model, value) {
   return value
 });
 var $d_Ldiode_RootModelRW = new $TypeData().initClass({
@@ -11330,7 +11263,7 @@ $c_Ldiode_ZoomModelRW.prototype.init___Ldiode_ModelR__F1__F2__Ldiode_FastEq = (f
   $c_Ldiode_ZoomModelR.prototype.init___Ldiode_ModelR__F1__Ldiode_FastEq.call(this, root, get, feq);
   return this
 });
-$c_Ldiode_ZoomModelRW.prototype.setF__O__O__O = (function(model, value) {
+$c_Ldiode_ZoomModelRW.prototype.updatedWith__O__O__O = (function(model, value) {
   return this.set$2.apply__O__O__O(model, value)
 });
 var $d_Ldiode_ZoomModelRW = new $TypeData().initClass({
@@ -11373,13 +11306,13 @@ $c_Lexample_AppCircuit$$anon$1$$anonfun$handle$1.prototype.applyOrElse__O__F1__O
     var a = x2.amount$1;
     var jsx$1 = this.$$outer$2;
     var this$1 = this.$$outer$2;
-    return jsx$1.updated__O__Ldiode_ActionResult((($uI(this$1.modelRW$1.value__O()) + a) | 0))
+    return jsx$1.updated__O__Ldiode_ActionResult((($uI(this$1.modelRW$1.eval__O__O(this$1.currentModel$1)) + a) | 0))
   } else if ($is_Lexample_Decrease(x1)) {
     var x3 = $as_Lexample_Decrease(x1);
     var a$2 = x3.amount$1;
     var jsx$2 = this.$$outer$2;
     var this$2 = this.$$outer$2;
-    return jsx$2.updated__O__Ldiode_ActionResult((($uI(this$2.modelRW$1.value__O()) - a$2) | 0))
+    return jsx$2.updated__O__Ldiode_ActionResult((($uI(this$2.modelRW$1.eval__O__O(this$2.currentModel$1)) - a$2) | 0))
   } else {
     var x = $m_Lexample_Reset$();
     if ((x === x1)) {
@@ -12724,10 +12657,22 @@ var $d_sjsr_UndefinedBehaviorError = new $TypeData().initClass({
   s_util_control_NoStackTrace: 1
 });
 $c_sjsr_UndefinedBehaviorError.prototype.$classData = $d_sjsr_UndefinedBehaviorError;
+function $is_Ldiode_ActionResult$EffectOnly(obj) {
+  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Ldiode_ActionResult$EffectOnly)))
+}
+function $as_Ldiode_ActionResult$EffectOnly(obj) {
+  return (($is_Ldiode_ActionResult$EffectOnly(obj) || (obj === null)) ? obj : $throwClassCastException(obj, "diode.ActionResult$EffectOnly"))
+}
+function $isArrayOf_Ldiode_ActionResult$EffectOnly(obj, depth) {
+  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Ldiode_ActionResult$EffectOnly)))
+}
+function $asArrayOf_Ldiode_ActionResult$EffectOnly(obj, depth) {
+  return (($isArrayOf_Ldiode_ActionResult$EffectOnly(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Ldiode.ActionResult$EffectOnly;", depth))
+}
 /** @constructor */
 function $c_Ldiode_ActionResult$ModelUpdate() {
   $c_O.call(this);
-  this.newValue$1 = null
+  this.newModel$1 = null
 }
 $c_Ldiode_ActionResult$ModelUpdate.prototype = new $h_O();
 $c_Ldiode_ActionResult$ModelUpdate.prototype.constructor = $c_Ldiode_ActionResult$ModelUpdate;
@@ -12747,7 +12692,7 @@ $c_Ldiode_ActionResult$ModelUpdate.prototype.equals__O__Z = (function(x$1) {
     return true
   } else if ($is_Ldiode_ActionResult$ModelUpdate(x$1)) {
     var ModelUpdate$1 = $as_Ldiode_ActionResult$ModelUpdate(x$1);
-    return $m_sr_BoxesRunTime$().equals__O__O__Z(this.newValue$1, ModelUpdate$1.newValue$1)
+    return $m_sr_BoxesRunTime$().equals__O__O__Z(this.newModel$1, ModelUpdate$1.newModel$1)
   } else {
     return false
   }
@@ -12755,7 +12700,7 @@ $c_Ldiode_ActionResult$ModelUpdate.prototype.equals__O__Z = (function(x$1) {
 $c_Ldiode_ActionResult$ModelUpdate.prototype.productElement__I__O = (function(x$1) {
   switch (x$1) {
     case 0: {
-      return this.newValue$1;
+      return this.newModel$1;
       break
     }
     default: {
@@ -12766,8 +12711,8 @@ $c_Ldiode_ActionResult$ModelUpdate.prototype.productElement__I__O = (function(x$
 $c_Ldiode_ActionResult$ModelUpdate.prototype.toString__T = (function() {
   return $m_sr_ScalaRunTime$().$$undtoString__s_Product__T(this)
 });
-$c_Ldiode_ActionResult$ModelUpdate.prototype.init___O = (function(newValue) {
-  this.newValue$1 = newValue;
+$c_Ldiode_ActionResult$ModelUpdate.prototype.init___O = (function(newModel) {
+  this.newModel$1 = newModel;
   return this
 });
 $c_Ldiode_ActionResult$ModelUpdate.prototype.hashCode__I = (function() {
@@ -12802,18 +12747,6 @@ var $d_Ldiode_ActionResult$ModelUpdate = new $TypeData().initClass({
   Ljava_io_Serializable: 1
 });
 $c_Ldiode_ActionResult$ModelUpdate.prototype.$classData = $d_Ldiode_ActionResult$ModelUpdate;
-function $is_Ldiode_ActionResult$ModelUpdateEffect(obj) {
-  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Ldiode_ActionResult$ModelUpdateEffect)))
-}
-function $as_Ldiode_ActionResult$ModelUpdateEffect(obj) {
-  return (($is_Ldiode_ActionResult$ModelUpdateEffect(obj) || (obj === null)) ? obj : $throwClassCastException(obj, "diode.ActionResult$ModelUpdateEffect"))
-}
-function $isArrayOf_Ldiode_ActionResult$ModelUpdateEffect(obj, depth) {
-  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Ldiode_ActionResult$ModelUpdateEffect)))
-}
-function $asArrayOf_Ldiode_ActionResult$ModelUpdateEffect(obj, depth) {
-  return (($isArrayOf_Ldiode_ActionResult$ModelUpdateEffect(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Ldiode.ActionResult$ModelUpdateEffect;", depth))
-}
 /** @constructor */
 function $c_Lscalatags_generic_StyleMisc$BorderStyle() {
   $c_Lscalatags_generic_StyleMisc$OutlineStyle.call(this);
@@ -13442,6 +13375,18 @@ function $m_sjs_js_WrappedArray$() {
     $n_sjs_js_WrappedArray$ = new $c_sjs_js_WrappedArray$().init___()
   };
   return $n_sjs_js_WrappedArray$
+}
+function $is_Ldiode_ActionResult$ModelUpdateEffect(obj) {
+  return (!(!((obj && obj.$classData) && obj.$classData.ancestors.Ldiode_ActionResult$ModelUpdateEffect)))
+}
+function $as_Ldiode_ActionResult$ModelUpdateEffect(obj) {
+  return (($is_Ldiode_ActionResult$ModelUpdateEffect(obj) || (obj === null)) ? obj : $throwClassCastException(obj, "diode.ActionResult$ModelUpdateEffect"))
+}
+function $isArrayOf_Ldiode_ActionResult$ModelUpdateEffect(obj, depth) {
+  return (!(!(((obj && obj.$classData) && (obj.$classData.arrayDepth === depth)) && obj.$classData.arrayBase.ancestors.Ldiode_ActionResult$ModelUpdateEffect)))
+}
+function $asArrayOf_Ldiode_ActionResult$ModelUpdateEffect(obj, depth) {
+  return (($isArrayOf_Ldiode_ActionResult$ModelUpdateEffect(obj, depth) || (obj === null)) ? obj : $throwArrayCastException(obj, "Ldiode.ActionResult$ModelUpdateEffect;", depth))
 }
 /** @constructor */
 function $c_Lscalatags_JsDom$StringFrag() {
@@ -15671,9 +15616,6 @@ $c_sc_AbstractSeq.prototype.reverse__O = (function() {
 $c_sc_AbstractSeq.prototype.size__I = (function() {
   return this.length__I()
 });
-$c_sc_AbstractSeq.prototype.orElse__s_PartialFunction__s_PartialFunction = (function(that) {
-  return new $c_s_PartialFunction$OrElse().init___s_PartialFunction__s_PartialFunction(this, that)
-});
 $c_sc_AbstractSeq.prototype.hashCode__I = (function() {
   return $m_s_util_hashing_MurmurHash3$().seqHash__sc_Seq__I(this.seq__sc_Seq())
 });
@@ -15705,9 +15647,6 @@ $c_sc_AbstractMap.prototype.equals__O__Z = (function(that) {
 });
 $c_sc_AbstractMap.prototype.toString__T = (function() {
   return $s_sc_TraversableLike$class__toString__sc_TraversableLike__T(this)
-});
-$c_sc_AbstractMap.prototype.orElse__s_PartialFunction__s_PartialFunction = (function(that) {
-  return new $c_s_PartialFunction$OrElse().init___s_PartialFunction__s_PartialFunction(this, that)
 });
 $c_sc_AbstractMap.prototype.addString__scm_StringBuilder__T__T__T__scm_StringBuilder = (function(b, start, sep, end) {
   return $s_sc_MapLike$class__addString__sc_MapLike__scm_StringBuilder__T__T__T__scm_StringBuilder(this, b, start, sep, end)

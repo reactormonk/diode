@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.5" data-chapter-title="Async Effects" data-filepath="usage/Effects.md" data-basepath=".." data-revision="Sat Feb 13 2016 23:26:10 GMT+0200 (FLE Standard Time)">
+    <div class="book" data-level="1.5" data-chapter-title="Async Effects" data-filepath="usage/Effects.md" data-basepath=".." data-revision="Mon Apr 04 2016 19:06:23 GMT+0300 (FLE Daylight Time)">
     
 
 <div class="book-summary">
@@ -318,15 +318,18 @@
                     
                         <h1 id="async-effects">Async Effects</h1>
 <p><img src="../images/architecture-effect.png" style="float: right; padding: 10px">
-Action handlers in Diode are <em>pure functions</em>, meaning they can just do computation based on the action and the current model. Side effects, such as making a
-request to the server, are not allowed. This restriction is mainly to make testing of handlers easier, when they behave in a predictable fashion.</p>
-<p>So how do you then perform async requests in a Diode application? In Redux this is solved by placing the async calls into <em>action creators</em>, functions that 
-return actions. While this keeps action handlers pure, it makes the application design fragmented. In Diode we follow in the footsteps of Elm by wrapping any
-side effects into <code>Effect</code>s and returning them from the action handler with the updated model.</p>
+Action handlers in Diode are <em>pure functions</em>, meaning they can just do computation based on the action and the current
+model. Side effects, such as making a request to the server, are not allowed. This restriction is mainly to make testing
+of handlers easier, when they behave in a predictable fashion.</p>
+<p>So how do you then perform async requests in a Diode application? In Redux this is solved by placing the async calls
+into <em>action creators</em>, functions that return actions. While this keeps action handlers pure, it makes the application
+design fragmented. In Diode we follow in the footsteps of Elm by wrapping any side effects into <code>Effect</code>s and returning
+them from the action handler with the updated model.</p>
 <h2 id="what-is-an-effect">What is an Effect?</h2>
-<p>In an Effect we <em>describe</em> a computation instead of directly <em>executing</em> it. It&apos;s quite similar to the <code>IO</code> concept in Scalaz/Haskell, containing a function
-that returns a <code>Future[AnyRef]</code>.</p>
-<p>The action returned by the <code>Future</code> is automatically dispatched by the Circuit. If your effect doesn&apos;t need anything dispatched, return a <code>None</code>.</p>
+<p>In an Effect we <em>describe</em> a computation instead of directly <em>executing</em> it. It&apos;s quite similar to the <code>IO</code> concept in
+Scalaz/Haskell, containing a function that returns a <code>Future[AnyRef]</code>.</p>
+<p>The action returned by the <code>Future</code> is automatically dispatched by the Circuit. If your effect doesn&apos;t need anything
+dispatched, return a <code>None</code>.</p>
 <h3 id="using-effects">Using Effects</h3>
 <p>To create an effect you need a function that runs something asynchronously, for example performing an Ajax call.</p>
 <pre><code class="lang-scala"><span class="token keyword">import</span> org<span class="token punctuation">.</span>scalajs<span class="token punctuation">.</span>dom<span class="token punctuation">.</span>ext<span class="token punctuation">.</span>Ajax
@@ -336,8 +339,8 @@ that returns a <code>Future[AnyRef]</code>.</p>
 <span class="token keyword">def</span> loadMessagesEffect<span class="token punctuation">(</span>user<span class="token operator">:</span> <span class="token builtin">String</span><span class="token punctuation">)</span> <span class="token operator">=</span> 
   Effect<span class="token punctuation">(</span>Ajax<span class="token punctuation">.</span>get<span class="token punctuation">(</span>s<span class="token string">&quot;/user/messages?id=$user&quot;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>map<span class="token punctuation">(</span>r <span class="token keyword">=&gt;</span> NewMessages<span class="token punctuation">(</span>r<span class="token punctuation">.</span>responseText<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 </code></pre>
-<p>Here the <code>loadMessagesEffect</code> doesn&apos;t actually execute the Ajax call immediately, but just provides an effect to do so. Once the <code>Ajax</code> future does complete, the
-result is mapped into a <code>NewMessages</code> action.</p>
+<p>Here the <code>loadMessagesEffect</code> doesn&apos;t actually execute the Ajax call immediately, but just provides an effect to do so.
+Once the <code>Ajax</code> future does complete, the result is mapped into a <code>NewMessages</code> action.</p>
 <p>To return the effects alongside the new model, use one of the helper functions provided by <code>ActionHandler</code>.</p>
 <pre><code class="lang-scala"><span class="token keyword">case</span> <span class="token keyword">class</span> Messages<span class="token punctuation">(</span>msgs<span class="token operator">:</span> <span class="token builtin">String</span><span class="token punctuation">,</span> loadTime<span class="token operator">:</span> <span class="token builtin">Int</span><span class="token punctuation">)</span>
 
@@ -357,7 +360,8 @@ result is mapped into a <code>NewMessages</code> action.</p>
 <span class="token keyword">val</span> serialBA <span class="token operator">=</span> Effect<span class="token punctuation">(</span>a<span class="token punctuation">)</span> <span class="token operator">&lt;&lt;</span> Effect<span class="token punctuation">(</span>b<span class="token punctuation">)</span>  <span class="token comment" spellcheck="true">// a is run after b completes</span>
 <span class="token keyword">val</span> parallelAB <span class="token operator">=</span> Effect<span class="token punctuation">(</span>a<span class="token punctuation">)</span> <span class="token operator">+</span> Effect<span class="token punctuation">(</span>b<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// a and b are run in parallel</span>
 </code></pre>
-<p>For example we might want to get periodic notifications (using <code>after</code>) while the messages are being loaded, to update the UI accordingly.</p>
+<p>For example we might want to get periodic notifications (using <code>after</code>) while the messages are being loaded, to update
+the UI accordingly.</p>
 <pre><code class="lang-scala">    <span class="token keyword">case</span> LoadMessages<span class="token punctuation">(</span>user<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
       updated<span class="token punctuation">(</span>value<span class="token punctuation">.</span>copy<span class="token punctuation">(</span>loadTime <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span> 
         loadMessagesEffect<span class="token punctuation">(</span>user<span class="token punctuation">)</span> <span class="token operator">+</span> Effect<span class="token punctuation">.</span>action<span class="token punctuation">(</span>StillLoading<span class="token punctuation">)</span><span class="token punctuation">.</span>after<span class="token punctuation">(</span><span class="token number">500</span><span class="token punctuation">.</span>millis<span class="token punctuation">)</span><span class="token punctuation">)</span>
@@ -370,7 +374,8 @@ result is mapped into a <code>NewMessages</code> action.</p>
       <span class="token keyword">else</span>
         noChange
 </code></pre>
-<p>Note how we need to update model when handling <code>StillLoading</code> because otherwise no views would be informed about the change.</p>
+<p>Note how we need to update model when handling <code>StillLoading</code> because otherwise no views would be informed about the
+change.</p>
 <p>For a more elaborate multi-state action management, take a look at <a href="../advanced/PotActions.html"><code>PotActions</code></a></p>
 
                     

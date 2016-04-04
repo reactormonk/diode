@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="1.3" data-chapter-title="Action Handlers" data-filepath="usage/Handlers.md" data-basepath=".." data-revision="Sat Feb 13 2016 23:26:10 GMT+0200 (FLE Standard Time)">
+    <div class="book" data-level="1.3" data-chapter-title="Action Handlers" data-filepath="usage/Handlers.md" data-basepath=".." data-revision="Mon Apr 04 2016 19:06:23 GMT+0300 (FLE Daylight Time)">
     
 
 <div class="book-summary">
@@ -324,9 +324,12 @@ and returns a new model. In practice, the handlers are typically partial functio
 actions, access only part of the model through a <code>ModelRW</code> trait and return an <code>ActionResult</code>.</p>
 <h2 id="in-the-circuit">In the Circuit</h2>
 <p>All action handling takes place within the <code>Circuit</code>, which has a single <code>actionHandler</code> method that takes care of all
-actions. Actually your application must define this function, typically by combining multiple <code>ActionHandler</code> classes
-together to form the final <em>partial function</em> that then handles the actions. There is also a <code>baseHandler</code> that handles
+actions. Actually your application must define this method, typically by composing multiple <code>ActionHandler</code> classes
+together to form the final handler function that then handles the actions. There is also a <code>baseHandler</code> that handles
 any action that was not handled by the <code>actionHandler</code>, ensuring we don&apos;t get a runtime <code>MatchError</code>.</p>
+<p>The type of <code>actionHandler</code> is <code>(M, AnyRef) =&gt; Option[ActionResult[M]]</code>, where <code>M</code> is the type of your root model. There
+is an implicit conversion from <code>ActionHandler</code> to this function type, so you can just pass your <code>ActionHandler</code> class
+directly.</p>
 <p>You may define your action handlers within your application <code>Circuit</code> singleton object as anonymous classes, or use
 external classes. The former is simpler to implement while the latter is better for independent testing. In our examples
 the handlers are defined using both strategies.</p>
@@ -380,7 +383,7 @@ started, we handle only the most simple action of replacing the whole tree.</p>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 
-<span class="token keyword">override</span> <span class="token keyword">val</span> actionHandler <span class="token operator">=</span> combineHandlers<span class="token punctuation">(</span>treeHandler<span class="token punctuation">)</span>
+<span class="token keyword">override</span> <span class="token keyword">val</span> actionHandler <span class="token operator">=</span> composeHandlers<span class="token punctuation">(</span>treeHandler<span class="token punctuation">)</span>
 </code></pre>
 <p>The zoom call could&apos;ve been written as a single </p>
 <pre><code class="lang-scala">zoomRW<span class="token punctuation">(</span>_<span class="token punctuation">.</span>tree<span class="token punctuation">.</span>root<span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">(</span>m<span class="token punctuation">,</span> v<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span> m<span class="token punctuation">.</span>copy<span class="token punctuation">(</span>tree <span class="token operator">=</span> m<span class="token punctuation">.</span>tree<span class="token punctuation">.</span>copy<span class="token punctuation">(</span>root <span class="token operator">=</span> v<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
@@ -391,8 +394,8 @@ started, we handle only the most simple action of replacing the whole tree.</p>
 it&apos;s rather straightforward:</p>
 <pre><code class="lang-scala"><span class="token keyword">abstract</span> <span class="token keyword">class</span> ActionHandler<span class="token punctuation">[</span>M<span class="token punctuation">,</span> T<span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token keyword">val</span> modelRW<span class="token operator">:</span> ModelRW<span class="token punctuation">[</span>M<span class="token punctuation">,</span> T<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">def</span> handle<span class="token operator">:</span> PartialFunction<span class="token punctuation">[</span><span class="token builtin">AnyRef</span><span class="token punctuation">,</span> ActionResult<span class="token punctuation">[</span>M<span class="token punctuation">]</span><span class="token punctuation">]</span>
-  <span class="token keyword">def</span> value<span class="token operator">:</span> T <span class="token operator">=</span> modelRW<span class="token punctuation">.</span>value
-  <span class="token keyword">def</span> updated<span class="token punctuation">(</span>newValue<span class="token operator">:</span> T<span class="token punctuation">)</span><span class="token operator">:</span> ActionResult<span class="token punctuation">[</span>M<span class="token punctuation">]</span> <span class="token operator">=</span> ModelUpdate<span class="token punctuation">(</span>modelRW<span class="token punctuation">.</span>updated<span class="token punctuation">(</span>newValue<span class="token punctuation">)</span><span class="token punctuation">)</span>
+  <span class="token keyword">def</span> value<span class="token operator">:</span> T <span class="token operator">=</span> modelRW<span class="token punctuation">.</span>eval<span class="token punctuation">(</span>currentModel<span class="token punctuation">)</span>
+  <span class="token keyword">def</span> updated<span class="token punctuation">(</span>newValue<span class="token operator">:</span> T<span class="token punctuation">)</span><span class="token operator">:</span> ActionResult<span class="token punctuation">[</span>M<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
   <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
 <span class="token punctuation">}</span>
 </code></pre>
@@ -487,11 +490,38 @@ also prevent removal or change of the root directory.</p>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 
-<span class="token keyword">override</span> <span class="token keyword">val</span> actionHandler <span class="token operator">=</span> combineHandlers<span class="token punctuation">(</span>treeHandler<span class="token punctuation">,</span> selectionHandler<span class="token punctuation">)</span>
+<span class="token keyword">override</span> <span class="token keyword">val</span> actionHandler <span class="token operator">=</span> composeHandlers<span class="token punctuation">(</span>treeHandler<span class="token punctuation">,</span> selectionHandler<span class="token punctuation">)</span>
 </code></pre>
 <p>Again we zoom into the <code>tree</code> but this time we continue to <code>selected</code>. The handler implementation is as trivial as with
-<code>ReplaceTree</code>. To inform <code>Circuit</code> about this new handler, we include it into the call to the <code>combineHandlers</code>
+<code>ReplaceTree</code>. To inform <code>Circuit</code> about this new handler, we include it into the call to the <code>composeHandlers</code>
 function.</p>
+<h2 id="handling-actions-multiple-times">Handling actions multiple times</h2>
+<p>The default behaviour of <code>composeHandlers</code> combines your handler functions in such a way that only one of them gets to
+handle the passed action. In some cases you&apos;ll want to divide the processing of an action into multiple handlers, for 
+example when a change in model causes some secondary changes elsewhere in the model (typically related to the UI). For
+these purposes you can use <code>foldHandlers</code>, which runs the action through all the provided handlers, passing an updated
+model from one handler to the next and combining the resulting effects.</p>
+<p>For example if we wanted to change the selection to parent node when the selected node is removed, we could do:</p>
+<pre><code class="lang-scala"><span class="token keyword">val</span> selectionHandler <span class="token operator">=</span> <span class="token keyword">new</span> ActionHandler<span class="token punctuation">(</span>
+  zoomRW<span class="token punctuation">(</span>_<span class="token punctuation">.</span>tree<span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">(</span>m<span class="token punctuation">,</span> v<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span> m<span class="token punctuation">.</span>copy<span class="token punctuation">(</span>tree <span class="token operator">=</span> v<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">.</span>zoomRW<span class="token punctuation">(</span>_<span class="token punctuation">.</span>selected<span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">(</span>m<span class="token punctuation">,</span> v<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span> m<span class="token punctuation">.</span>copy<span class="token punctuation">(</span>selected <span class="token operator">=</span> v<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">override</span> <span class="token keyword">def</span> handle <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token keyword">case</span> Select<span class="token punctuation">(</span>sel<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span> updated<span class="token punctuation">(</span>sel<span class="token punctuation">)</span>
+    <span class="token keyword">case</span> RemoveNode<span class="token punctuation">(</span>path<span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
+      <span class="token comment" spellcheck="true">// select parent node if selected node is removed</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span>init<span class="token punctuation">.</span>nonEmpty <span class="token operator">&amp;&amp;</span> path <span class="token operator">==</span> value<span class="token punctuation">)</span>
+        updated<span class="token punctuation">(</span>path<span class="token punctuation">.</span>init<span class="token punctuation">)</span>
+      <span class="token keyword">else</span>
+        noChange
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">override</span> <span class="token keyword">val</span> actionHandler <span class="token operator">=</span> foldHandlers<span class="token punctuation">(</span>treeHandler<span class="token punctuation">,</span> selectionHandler<span class="token punctuation">)</span>
+</code></pre>
+<p>You can combine <code>composeHandlers</code> and <code>foldHandlers</code> to build more complex action handler hierarchies.</p>
+<pre><code class="lang-scala"><span class="token keyword">override</span> <span class="token keyword">val</span> actionHandler <span class="token operator">=</span> foldHandlers<span class="token punctuation">(</span>composeHandlers<span class="token punctuation">(</span>h1<span class="token punctuation">,</span> h2<span class="token punctuation">,</span> h3<span class="token punctuation">)</span><span class="token punctuation">,</span> composeHandlers<span class="token punctuation">(</span>h4<span class="token punctuation">,</span> h5<span class="token punctuation">)</span><span class="token punctuation">)</span>
+</code></pre>
+<p>The above handler would pass the action to both of the composed handlers.</p>
 <h2 id="testing">Testing</h2>
 <p>As action handlers are pure functions, testing them is rather trivial. Although you can define handlers inline within
 your <code>Circuit</code> implementation, it&apos;s usually better to have them as separate classes for easy testing. For example:</p>
@@ -524,14 +554,14 @@ doesn&apos;t care about the root model type, usually easiest is just to use the 
 <p>In individual test cases</p>
 <ol>
 <li>Build a handler instance.</li>
-<li>Call the <code>handle</code> method with an appropriate action.</li>
+<li>Call the <code>handleAction</code> method with an appropriate action and current model.</li>
 <li>Check the result.</li>
 </ol>
 <pre><code class="lang-scala"><span class="token symbol">&apos;RemoveNode</span> <span class="token operator">-</span> <span class="token punctuation">{</span>
   <span class="token keyword">val</span> handler <span class="token operator">=</span> build
-  <span class="token keyword">val</span> result <span class="token operator">=</span> handler<span class="token punctuation">.</span>handle<span class="token punctuation">(</span>RemoveNode<span class="token punctuation">(</span>Seq<span class="token punctuation">(</span><span class="token string">&quot;/&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;2&quot;</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+  <span class="token keyword">val</span> result <span class="token operator">=</span> handler<span class="token punctuation">.</span>handleAction<span class="token punctuation">(</span>dir<span class="token punctuation">,</span> RemoveNode<span class="token punctuation">(</span>Seq<span class="token punctuation">(</span><span class="token string">&quot;/&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;2&quot;</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
   assertMatch<span class="token punctuation">(</span>result<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-    <span class="token keyword">case</span> ModelUpdate<span class="token punctuation">(</span>Directory<span class="token punctuation">(</span><span class="token string">&quot;/&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;/&quot;</span><span class="token punctuation">,</span> Vector<span class="token punctuation">(</span>File<span class="token punctuation">(</span><span class="token string">&quot;F1&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;boot.sys&quot;</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
+    <span class="token keyword">case</span> Some<span class="token punctuation">(</span>ModelUpdate<span class="token punctuation">(</span>Directory<span class="token punctuation">(</span><span class="token string">&quot;/&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;/&quot;</span><span class="token punctuation">,</span> Vector<span class="token punctuation">(</span>File<span class="token punctuation">(</span><span class="token string">&quot;F1&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;boot.sys&quot;</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
