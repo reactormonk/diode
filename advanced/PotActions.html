@@ -48,7 +48,7 @@
     <body>
         
         
-    <div class="book" data-level="2.2" data-chapter-title="Stateful Actions" data-filepath="advanced/PotActions.md" data-basepath=".." data-revision="Mon Apr 04 2016 19:06:23 GMT+0300 (FLE Daylight Time)">
+    <div class="book" data-level="2.2" data-chapter-title="Stateful Actions" data-filepath="advanced/PotActions.md" data-basepath=".." data-revision="Wed Apr 13 2016 13:42:40 GMT+0300 (FLE Daylight Time)">
     
 
 <div class="book-summary">
@@ -410,12 +410,15 @@ value is <code>Try[A]</code> to indicate success/failure.</p>
 <p>A common pattern with async data is to retry failed operations a few times. <code>AsyncActionRetriable</code> and <code>PotActionRetriable</code> support this pattern by providing
 a retry policy. The retry policy resides in the action and it&apos;s updated on every retry. Therefore you need to pass it forward in the <code>next</code> method.</p>
 <pre><code class="lang-scala"><span class="token keyword">case</span> <span class="token keyword">class</span> UpdateTodos<span class="token punctuation">(</span>result<span class="token operator">:</span> Pot<span class="token punctuation">[</span>Todos<span class="token punctuation">]</span> <span class="token operator">=</span> Empty<span class="token punctuation">,</span> retryPolicy<span class="token operator">:</span> RetryPolicy <span class="token operator">=</span> Retry<span class="token punctuation">.</span>None<span class="token punctuation">)</span> 
-  <span class="token keyword">extends</span> PotAction<span class="token punctuation">[</span>Todos<span class="token punctuation">,</span> UpdateTodos<span class="token punctuation">]</span> <span class="token punctuation">{</span>
+  <span class="token keyword">extends</span> PotActionRetriable<span class="token punctuation">[</span>Todos<span class="token punctuation">,</span> UpdateTodos<span class="token punctuation">]</span> <span class="token punctuation">{</span>
   <span class="token keyword">def</span> next<span class="token punctuation">(</span>newResult<span class="token operator">:</span> Pot<span class="token punctuation">[</span>Todos<span class="token punctuation">]</span><span class="token punctuation">,</span> newRetryPolicy<span class="token operator">:</span> RetryPolicy<span class="token punctuation">)</span> <span class="token operator">=</span> UpdateTodos<span class="token punctuation">(</span>newResult<span class="token punctuation">,</span> newRetryPolicy<span class="token punctuation">)</span>
 <span class="token punctuation">}</span>
 </code></pre>
 <p>When a failure is encountered, the retry policy is consulted on what to do next:</p>
-<pre><code class="lang-scala"><span class="token keyword">case</span> PotFailed <span class="token keyword">=&gt;</span>
+<pre><code class="lang-scala"><span class="token comment" spellcheck="true">// create an effect function that takes retry policy</span>
+<span class="token keyword">val</span> updateEffect <span class="token operator">=</span> action<span class="token punctuation">.</span>effectWithRetry<span class="token punctuation">(</span>loadTodos<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">(</span>todos <span class="token keyword">=&gt;</span> Todos<span class="token punctuation">(</span>todos<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token keyword">case</span> PotFailed <span class="token keyword">=&gt;</span>
   <span class="token comment" spellcheck="true">// extract exception from action and call retryPolicy</span>
   action<span class="token punctuation">.</span>retryPolicy<span class="token punctuation">.</span>retry<span class="token punctuation">(</span>action<span class="token punctuation">.</span>result<span class="token punctuation">.</span>failed<span class="token punctuation">.</span>get<span class="token punctuation">,</span> updateEffect<span class="token punctuation">)</span> <span class="token keyword">match</span> <span class="token punctuation">{</span>
     <span class="token keyword">case</span> Right<span class="token punctuation">(</span><span class="token punctuation">(</span>_<span class="token punctuation">,</span> retryEffect<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">=&gt;</span>
