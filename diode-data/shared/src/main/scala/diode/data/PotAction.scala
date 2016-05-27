@@ -72,7 +72,7 @@ object PotAction {
   /**
     * Provides state machine handling of a `Pot` action
     */
-  def handler[A, M, P <: PotAction[A, P]]()(implicit ec: ExecutionContext): (PotAction[A, P], ActionHandler[M, Pot[A]], Effect) => ActionResult[M] =
+  def handler[A, M, P <: PotAction[A, P]]()(implicit ec: ExecutionContext): (PotAction[A, P], ActionHandler[M, Pot[A], P], Effect[P]) => ActionResult[M, P] =
     handler(Duration.Zero)(diode.Implicits.runAfterImpl, ec)
 
   /**
@@ -81,7 +81,7 @@ object PotAction {
     * @param progressInterval Interval at which to update progress
     */
   def handler[A, M, P <: PotAction[A, P]](progressInterval: FiniteDuration)(implicit runner: RunAfter, ec: ExecutionContext) = {
-    (action: PotAction[A, P], handler: ActionHandler[M, Pot[A]], updateEffect: Effect) => {
+    (action: PotAction[A, P], handler: ActionHandler[M, Pot[A], P], updateEffect: Effect[P]) => {
       import PotState._
       import handler._
       action.state match {
@@ -111,7 +111,7 @@ object PotActionRetriable {
   /**
     * Provides state machine handling of a retriable `Pot` action
     */
-  def handler[A, M, P <: PotActionRetriable[A, P]]()(implicit ec: ExecutionContext): (PotActionRetriable[A, P], ActionHandler[M, Pot[A]], RetryPolicy => Effect) => ActionResult[M] =
+  def handler[A, M, P <: PotActionRetriable[A, P]]()(implicit ec: ExecutionContext): (PotActionRetriable[A, P], ActionHandler[M, Pot[A], P], RetryPolicy => Effect[P]) => ActionResult[M, P] =
     handler(Duration.Zero)(diode.Implicits.runAfterImpl, ec)
 
   /**
@@ -120,7 +120,7 @@ object PotActionRetriable {
     * @param progressInterval Interval at which to update progress
     */
   def handler[A, M, P <: PotActionRetriable[A, P]](progressInterval: FiniteDuration)(implicit runner: RunAfter, ec: ExecutionContext) = {
-    (action: PotActionRetriable[A, P], handler: ActionHandler[M, Pot[A]], updateEffect: RetryPolicy => Effect) => {
+    (action: PotActionRetriable[A, P], handler: ActionHandler[M, Pot[A], P], updateEffect: RetryPolicy => Effect[P]) => {
       import PotState._
       import handler._
       action.state match {

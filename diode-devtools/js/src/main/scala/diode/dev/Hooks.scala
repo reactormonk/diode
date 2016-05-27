@@ -5,7 +5,7 @@ import org.scalajs.dom
 import org.scalajs.dom.raw.KeyboardEvent
 
 object Hooks {
-  def hookPersistState(id: String, dispatch: Dispatcher) = {
+  def hookPersistState[A](id: String, dispatch: Dispatcher[A]) = {
     def keyDown(event: KeyboardEvent) = {
       if (event.ctrlKey && event.shiftKey) {
         val c = Character.toChars(event.keyCode)(0).toLower

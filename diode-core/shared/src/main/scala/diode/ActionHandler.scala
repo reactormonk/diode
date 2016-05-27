@@ -11,7 +11,7 @@ import scala.language.implicitConversions
   *
   * @param modelRW Model reader/writer for the actions this handler processes.
   */
-abstract class ActionHandler[M, T](val modelRW: ModelRW[M, T]) {
+abstract class ActionHandler[M, T, A](val modelRW: ModelRW[M, T]) {
 
   import ActionResult._
 
@@ -22,7 +22,7 @@ abstract class ActionHandler[M, T](val modelRW: ModelRW[M, T]) {
   /**
     * Handles the incoming action by updating current model and calling the real `handle` function
     */
-  def handleAction(model: M, action: AnyRef): Option[ActionResult[M]] = {
+  def handleAction(model: M, action: A): Option[ActionResult[M, A]] = {
     currentModel = model
     liftedHandler(action)
   }
@@ -30,7 +30,7 @@ abstract class ActionHandler[M, T](val modelRW: ModelRW[M, T]) {
   /**
     * Override this function to handle dispatched actions.
     */
-  protected def handle: PartialFunction[AnyRef, ActionResult[M]]
+  protected def handle: PartialFunction[A, ActionResult[M, A]]
 
   /**
     * Helper function that returns the current value from the model.
@@ -43,7 +43,7 @@ abstract class ActionHandler[M, T](val modelRW: ModelRW[M, T]) {
     * @param newValue
     * @return
     */
-  def updated(newValue: T): ActionResult[M] =
+  def updated(newValue: T): ActionResult[M, A] =
     ModelUpdate(modelRW.updatedWith(currentModel, newValue))
 
   /**
@@ -53,7 +53,7 @@ abstract class ActionHandler[M, T](val modelRW: ModelRW[M, T]) {
     * @param newValue
     * @return
     */
-  def updatedSilent(newValue: T): ActionResult[M] =
+  def updatedSilent(newValue: T): ActionResult[M, A] =
     ModelUpdateSilent(modelRW.updatedWith(currentModel, newValue))
 
   /**
@@ -63,7 +63,7 @@ abstract class ActionHandler[M, T](val modelRW: ModelRW[M, T]) {
     * @param effect
     * @return
     */
-  def updated(newValue: T, effect: Effect): ActionResult[M] =
+  def updated(newValue: T, effect: Effect[A]): ActionResult[M, A] =
     ModelUpdateEffect(modelRW.updatedWith(currentModel, newValue), effect)
 
   /**
@@ -74,7 +74,7 @@ abstract class ActionHandler[M, T](val modelRW: ModelRW[M, T]) {
     * @param effect
     * @return
     */
-  def updatedSilent(newValue: T, effect: Effect): ActionResult[M] =
+  def updatedSilent(newValue: T, effect: Effect[A]): ActionResult[M, A] =
     ModelUpdateSilentEffect(modelRW.updatedWith(currentModel, newValue), effect)
 
   /**
@@ -82,7 +82,7 @@ abstract class ActionHandler[M, T](val modelRW: ModelRW[M, T]) {
     *
     * @return
     */
-  def noChange: ActionResult[M] =
+  def noChange: ActionResult[M, A] =
     NoChange
 
   /**
@@ -91,7 +91,7 @@ abstract class ActionHandler[M, T](val modelRW: ModelRW[M, T]) {
     * @param effect
     * @return
     */
-  def effectOnly(effect: Effect): ActionResult[M] =
+  def effectOnly(effect: Effect[A]): ActionResult[M, A] =
     EffectOnly(effect)
 
   /**
@@ -100,11 +100,11 @@ abstract class ActionHandler[M, T](val modelRW: ModelRW[M, T]) {
     * @param delay How much to delay the effect.
     * @param f     Result of the effect
     */
-  def runAfter[A <: AnyRef](delay: FiniteDuration)(f: => A)(implicit runner: RunAfter, ec: ExecutionContext): Effect =
+  def runAfter(delay: FiniteDuration)(f: => A)(implicit runner: RunAfter, ec: ExecutionContext): Effect[A] =
     Effect(runner.runAfter(delay)(f))
 }
 
 object ActionHandler {
-  implicit def extractHandler[M <: AnyRef](actionHandler: ActionHandler[M, _]): (M, AnyRef) => Option[ActionResult[M]] =
+  implicit def extractHandler[M, A](actionHandler: ActionHandler[M, _, A]): (M, A) => Option[ActionResult[M, A]] =
     actionHandler.handleAction
 }

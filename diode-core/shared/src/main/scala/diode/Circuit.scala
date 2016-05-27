@@ -3,49 +3,50 @@ package diode
 import scala.collection.immutable.Queue
 import scala.language.higherKinds
 
-trait Dispatcher {
-  def dispatch(action: AnyRef): Unit
+trait Dispatcher[-A] {
+  def dispatch(action: DiodeAction[A]): Unit
+  def dispatch(action: A): Unit = dispatch(Action(action))
 
-  def apply(action: AnyRef) = dispatch(action)
+  def apply(action: A) = dispatch(action)
 }
 
-trait ActionProcessor[M <: AnyRef] {
-  def process(dispatch: Dispatcher, action: AnyRef, next: (AnyRef) => ActionResult[M], currentModel: M): ActionResult[M]
+trait ActionProcessor[M <: AnyRef, A] {
+  def process(dispatch: Dispatcher[A], action: A, next: A => ActionResult[M, A], currentModel: M): ActionResult[M, A]
 }
 
-sealed trait ActionResult[+M] {
+sealed trait ActionResult[+M, +A] {
   def newModelOpt: Option[M] = None
-  def effectOpt: Option[Effect] = None
+  def effectOpt: Option[Effect[A]] = None
 }
 
-sealed trait ModelUpdated[+M] extends ActionResult[M] {
+sealed trait ModelUpdated[+M, A] extends ActionResult[M, A] {
   def newModel: M
   override def newModelOpt: Option[M] = Some(newModel)
 }
 
-sealed trait HasEffect[+M] extends ActionResult[M] {
-  def effect: Effect
-  override def effectOpt: Option[Effect] = Some(effect)
+sealed trait HasEffect[+M, A] extends ActionResult[M, A] {
+  def effect: Effect[A]
+  override def effectOpt: Option[Effect[A]] = Some(effect)
 }
 
 sealed trait UpdateSilent
 
 object ActionResult {
 
-  case object NoChange extends ActionResult[Nothing]
+  case object NoChange extends ActionResult[Nothing, Nothing]
 
-  final case class ModelUpdate[M](newModel: M) extends ModelUpdated[M]
+  final case class ModelUpdate[M, A](newModel: M) extends ModelUpdated[M, A]
 
-  final case class ModelUpdateSilent[M](newModel: M) extends ModelUpdated[M] with UpdateSilent
+  final case class ModelUpdateSilent[M, A](newModel: M) extends ModelUpdated[M, A] with UpdateSilent
 
-  final case class EffectOnly(effect: Effect) extends ActionResult[Nothing] with HasEffect[Nothing]
+  final case class EffectOnly[A](effect: Effect[A]) extends ActionResult[Nothing, A] with HasEffect[Nothing, A]
 
-  final case class ModelUpdateEffect[M](newModel: M, effect: Effect) extends ModelUpdated[M] with HasEffect[M]
+  final case class ModelUpdateEffect[M, A](newModel: M, effect: Effect[A]) extends ModelUpdated[M, A] with HasEffect[M, A]
 
-  final case class ModelUpdateSilentEffect[M](newModel: M, effect: Effect)
-    extends ModelUpdated[M] with HasEffect[M] with UpdateSilent
+  final case class ModelUpdateSilentEffect[M, A](newModel: M, effect: Effect[A])
+    extends ModelUpdated[M, A] with HasEffect[M, A] with UpdateSilent
 
-  def apply[M](model: Option[M], effect: Option[Effect]): ActionResult[M] = (model, effect) match {
+  def apply[M, A](model: Option[M], effect: Option[Effect[A]]): ActionResult[M, A] = (model, effect) match {
     case (Some(m), Some(e)) => ModelUpdateEffect(m, e)
     case (Some(m), None) => ModelUpdate(m)
     case (None, Some(e)) => EffectOnly(e)
@@ -53,9 +54,14 @@ object ActionResult {
   }
 }
 
-trait Circuit[M <: AnyRef] extends Dispatcher {
+sealed trait DiodeAction[+A]
+case class Action[+A](a: A) extends DiodeAction[A]
+case class ActionSeq[+A](a: Seq[A]) extends DiodeAction[A]
+case object Noop extends DiodeAction[Nothing]
 
-  type HandlerFunction = (M, AnyRef) => Option[ActionResult[M]]
+trait Circuit[M <: AnyRef, A] extends Dispatcher[A] {
+
+  type HandlerFunction = (M, A) => Option[ActionResult[M, A]]
 
   private case class Subscription[T](listener: ModelR[M, T] => Unit, cursor: ModelR[M, T], lastValue: T) {
     def changed: Option[Subscription[T]] = {
@@ -84,34 +90,17 @@ trait Circuit[M <: AnyRef] extends Dispatcher {
 
   private val modelRW = new RootModelRW[M](model)
   private var isDispatching = false
-  private var dispatchQueue = Queue.empty[AnyRef]
+  private var dispatchQueue = Queue.empty[DiodeAction[A]]
   private var listenerId = 0
   private var listeners = Map.empty[Int, Subscription[_]]
-  private var processors = List.empty[ActionProcessor[M]]
-  private var processChain = buildProcessChain
+  private var processors = List.empty[ActionProcessor[M, A]]
+  private var processChain: A => ActionResult[M, A] = buildProcessChain
 
   private def buildProcessChain = {
     // chain processing functions
-    processors.reverse.foldLeft(process _)((next, processor) =>
-      (action: AnyRef) => processor.process(this, action, next, model)
+    processors.reverse.foldLeft((x: A) => process(Action(x)))((next, processor) =>
+      (action: A) => processor.process(this, action, next, model)
     )
-  }
-
-  private def baseHandler(action: AnyRef) = action match {
-    case seq: Seq[_] =>
-      // dispatch all actions in the sequence using internal dispatchBase to prevent
-      // additional calls to subscribed listeners
-      seq.asInstanceOf[Seq[AnyRef]].foreach(dispatchBase)
-      ActionResult.NoChange
-    case None =>
-      // ignore
-      ActionResult.NoChange
-    case a if a.getClass.getName.endsWith("$") =>
-      handleFatal(action, new IllegalArgumentException(s"Action $action was not handled by any action handler. It seems to be a singleton object, so please check that you have not accidentally dispatched a companion object instead of a case class."))
-      ActionResult.NoChange
-    case unknown =>
-      handleError(s"Action $unknown was not handled by any action handler")
-      ActionResult.NoChange
   }
 
   /**
@@ -168,12 +157,12 @@ trait Circuit[M <: AnyRef] extends Dispatcher {
   }
 
   /**
-    * Adds a new `ActionProcessor[M]` to the action processing chain. The processor is called for
+    * Adds a new `ActionProcessor[M, A]` to the action processing chain. The processor is called for
     * every dispatched action.
     *
     * @param processor
     */
-  def addProcessor(processor: ActionProcessor[M]): Unit = {
+  def addProcessor(processor: ActionProcessor[M, A]): Unit = {
     this.synchronized {
       processors = processor :: processors
       processChain = buildProcessChain
@@ -181,11 +170,11 @@ trait Circuit[M <: AnyRef] extends Dispatcher {
   }
 
   /**
-    * Removes a previously added `ActionProcessor[M]` from the action processing chain.
+    * Removes a previously added `ActionProcessor[M, A]` from the action processing chain.
     *
     * @param processor
     */
-  def removeProcessor(processor: ActionProcessor[M]): Unit = {
+  def removeProcessor(processor: ActionProcessor[M, A]): Unit = {
     this.synchronized {
       processors = processors.filterNot(_ == processor)
       processChain = buildProcessChain
@@ -199,14 +188,14 @@ trait Circuit[M <: AnyRef] extends Dispatcher {
     * @param action Action that caused the exception
     * @param e      Exception that was thrown
     */
-  def handleFatal(action: AnyRef, e: Throwable): Unit = throw e
+  def handleFatal(action: A, e: Throwable): Unit = throw e
 
   /**
     * Handle a non-fatal error, such as dispatching an action with no action handler.
     *
     * @param msg Error message
     */
-  def handleError(msg: String): Unit = throw new Exception(s"handleError called with: $msg")
+  def handleError(msg: String): Nothing = throw new Exception(s"handleError called with: $msg")
 
   /**
     * Updates the model if it has changed (reference equality check)
@@ -223,9 +212,25 @@ trait Circuit[M <: AnyRef] extends Dispatcher {
     * @param action Action to be handled
     * @return
     */
-  private def process(action: AnyRef): ActionResult[M] = {
-    actionHandler(model, action).getOrElse(baseHandler(action))
+  private def process(diodeAction: DiodeAction[A]): ActionResult[M, A] = {
+    multiActionHandler(diodeAction, action =>
+      actionHandler(model, action).getOrElse(handleError(s"Action was not processed: $action")),
+      ActionResult.NoChange
+    )
   }
+
+  private def multiActionHandler[B](action: DiodeAction[A], normalDispatch: A => B, default: B): B = action match {
+    case Action(a) => normalDispatch(a)
+    case ActionSeq(seq) =>
+      // dispatch all actions in the sequence using internal dispatchBase to prevent
+      // additional calls to subscribed listeners
+      seq.foreach(dispatchBase)
+      default
+    case Noop =>
+      // ignore
+      default
+  }
+
 
   /**
     * Composes multiple handlers into a single handler. Processing stops as soon as a handler is able to handle
@@ -233,7 +238,7 @@ trait Circuit[M <: AnyRef] extends Dispatcher {
     */
   def composeHandlers(handlers: HandlerFunction*): HandlerFunction =
     (model, action) => {
-      handlers.foldLeft(Option.empty[ActionResult[M]]) {
+      handlers.foldLeft(Option.empty[ActionResult[M, A]]) {
         (a, b) => a.orElse(b(model, action))
       }
     }
@@ -248,7 +253,7 @@ trait Circuit[M <: AnyRef] extends Dispatcher {
     */
   def foldHandlers(handlers: HandlerFunction*): HandlerFunction =
     (initialModel, action) => {
-      handlers.foldLeft((initialModel, Option.empty[ActionResult[M]])) { case ((currentModel, currentResult), handler) =>
+      handlers.foldLeft((initialModel, Option.empty[ActionResult[M, A]])) { case ((currentModel, currentResult), handler) =>
         handler(currentModel, action) match {
           case None =>
             (currentModel, currentResult)
@@ -277,64 +282,66 @@ trait Circuit[M <: AnyRef] extends Dispatcher {
     *
     * @param action Action to dispatch
     */
-  def dispatch(action: AnyRef): Unit = {
+  def dispatch(diodeAction: DiodeAction[A]): Unit = {
     this.synchronized {
       if (!isDispatching) {
-        try {
-          isDispatching = true
-          val oldModel = model
-          val silent = dispatchBase(action)
-          if (oldModel ne model) {
-            // walk through all listeners and update subscriptions when model has changed
-            val updated = listeners.foldLeft(listeners) { case (l, (key, sub)) =>
-              if (listeners.isDefinedAt(key)) {
-                // Listener still exists
-                sub.changed match {
-                  case Some(newSub) => {
-                    // value at the cursor has changed, call listener and update subscription
-                    if (!silent) sub.call()
-                    l.updated(key, newSub)
-                  }
+        multiActionHandler[Unit](diodeAction, {action =>
+          try {
+            isDispatching = true
+            val oldModel = model
+            val silent = dispatchBase(action)
+            if (oldModel ne model) {
+              // walk through all listeners and update subscriptions when model has changed
+              val updated = listeners.foldLeft(listeners) { case (l, (key, sub)) =>
+                if (listeners.isDefinedAt(key)) {
+                  // Listener still exists
+                  sub.changed match {
+                    case Some(newSub) => {
+                      // value at the cursor has changed, call listener and update subscription
+                      if (!silent) sub.call()
+                      l.updated(key, newSub)
+                    }
 
-                  case None => {
-                    // nothing interesting happened
-                    l
+                    case None => {
+                      // nothing interesting happened
+                      l
+                    }
                   }
                 }
+                else {
+                  // Listener was removed since we started
+                  l
+                }
               }
-              else {
-                // Listener was removed since we started
-                l
-              }
-            }
 
-            // Listeners may have changed during processing (subscribe or unsubscribe)
-            // so only update the listeners that are still there, and leave any new listeners that may be there now.
-            listeners = updated.foldLeft(listeners) { case (l, (key, sub)) =>
-              if (l.isDefinedAt(key)) {
-                // Listener still exists for this key
-                l.updated(key, sub)
-              }
-              else {
-                // Listener was removed for this key, skip it
-                l
+              // Listeners may have changed during processing (subscribe or unsubscribe)
+              // so only update the listeners that are still there, and leave any new listeners that may be there now.
+              listeners = updated.foldLeft(listeners) { case (l, (key, sub)) =>
+                if (l.isDefinedAt(key)) {
+                  // Listener still exists for this key
+                  l.updated(key, sub)
+                }
+                else {
+                  // Listener was removed for this key, skip it
+                  l
+                }
               }
             }
+          } catch {
+            case e: Throwable =>
+              handleFatal(action, e)
+          } finally {
+            isDispatching = false
           }
-        } catch {
-          case e: Throwable =>
-            handleFatal(action, e)
-        } finally {
-          isDispatching = false
-        }
-        // if there is an item in the queue, dispatch it
-        dispatchQueue.dequeueOption foreach { case (nextAction, queue) =>
-          dispatchQueue = queue
-          dispatch(nextAction)
-        }
+          // if there is an item in the queue, dispatch it
+          dispatchQueue.dequeueOption foreach { case (nextAction, queue) =>
+            dispatchQueue = queue
+            dispatch(nextAction)
+          }
+      }, ())
       } else {
         // add to the queue
-        dispatchQueue = dispatchQueue.enqueue(action)
+        dispatchQueue = dispatchQueue.enqueue(diodeAction)
       }
     }
   }
@@ -342,9 +349,10 @@ trait Circuit[M <: AnyRef] extends Dispatcher {
   /**
     * Perform actual dispatching, without calling change listeners
     */
-  protected def dispatchBase(action: AnyRef): Boolean = {
+  protected def dispatchBase(action: A): Boolean = {
     try {
-      processChain(action) match {
+      val res: ActionResult[M, A] = processChain(action)
+      res match {
         case ActionResult.NoChange =>
           // no-op
           false
@@ -362,17 +370,19 @@ trait Circuit[M <: AnyRef] extends Dispatcher {
           }(effects.ec)
           true
         case ActionResult.ModelUpdateEffect(newModel, effects) =>
+          val e: Effect[A] = effects
           update(newModel)
           // run effects
-          effects.run(dispatch).recover {
+          e.run(dispatch).recover {
             case e: Throwable =>
               handleError(s"Error in processing effects for action $action: $e")
           }(effects.ec)
           false
         case ActionResult.ModelUpdateSilentEffect(newModel, effects) =>
+          val e: Effect[A] = effects
           update(newModel)
           // run effects
-          effects.run(dispatch).recover {
+          e.run(dispatch).recover {
             case e: Throwable =>
               handleError(s"Error in processing effects for action $action: $e")
           }(effects.ec)

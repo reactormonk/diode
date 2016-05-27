@@ -43,7 +43,7 @@ trait AsyncAction[A, P <: AsyncAction[A, P]] {
     * @tparam M
     * @return
     */
-  def handle[M](pf: PartialFunction[PotState, ActionResult[M]]) =
+  def handle[M](pf: PartialFunction[PotState, ActionResult[M, P]]) =
     pf(state)
 
   /**
@@ -55,8 +55,8 @@ trait AsyncAction[A, P <: AsyncAction[A, P]] {
     * @param f       External handler function
     * @return An action result
     */
-  def handleWith[M, T](handler: ActionHandler[M, T], effect: Effect)
-    (f: (this.type, ActionHandler[M, T], Effect) => ActionResult[M]): ActionResult[M] =
+  def handleWith[M, T](handler: ActionHandler[M, T, P], effect: Effect[P])
+    (f: (this.type, ActionHandler[M, T, P], Effect[P]) => ActionResult[M, P]): ActionResult[M, P] =
     f(this, handler, effect)
 
   /**
@@ -125,8 +125,8 @@ trait AsyncActionRetriable[A, P <: AsyncActionRetriable[A, P]] extends AsyncActi
     * @param f           External handler function
     * @return An action result
     */
-  def handleWith[M, T](handler: ActionHandler[M, T], effectRetry: RetryPolicy => Effect)
-    (f: (this.type, ActionHandler[M, T], RetryPolicy => Effect) => ActionResult[M]): ActionResult[M] =
+  def handleWith[M, T](handler: ActionHandler[M, T, P], effectRetry: RetryPolicy => Effect[P])
+    (f: (this.type, ActionHandler[M, T, P], RetryPolicy => Effect[P]) => ActionResult[M, P]): ActionResult[M, P] =
     f(this, handler, effectRetry)
 
   /**
@@ -168,7 +168,7 @@ object AsyncAction {
   def mapHandler[K, V, A <: Traversable[(K, Pot[V])], M, P <: AsyncAction[A, P]](keys: Set[K])
     (implicit ec: ExecutionContext) = {
     require(keys.nonEmpty, "AsyncAction:mapHandler - The set of keys to update can't be empty")
-    (action: AsyncAction[A, P], handler: ActionHandler[M, PotMap[K, V]], updateEffect: Effect) => {
+    (action: AsyncAction[A, P], handler: ActionHandler[M, PotMap[K, V], A], updateEffect: Effect[A]) => {
       import PotState._
       import handler._
       // updates/adds only those values whose key is in the `keys` set
@@ -206,7 +206,7 @@ object AsyncAction {
   def vectorHandler[V, A <: Traversable[(Int, Pot[V])], M, P <: AsyncAction[A, P]](indices: Set[Int])
     (implicit ec: ExecutionContext) = {
     require(indices.nonEmpty, "AsyncAction:vectorHandler - The set of indices to update can't be empty")
-    (action: AsyncAction[A, P], handler: ActionHandler[M, PotVector[V]], updateEffect: Effect) => {
+    (action: AsyncAction[A, P], handler: ActionHandler[M, PotVector[V], A], updateEffect: Effect[A]) => {
       import PotState._
       import handler._
       // updates/adds only those values whose index is in the `indices` set
@@ -251,8 +251,8 @@ object AsyncActionRetriable {
   def mapHandler[K, V, A <: Traversable[(K, Pot[V])], M, P <: AsyncActionRetriable[A, P]](keys: Set[K])
     (implicit ec: ExecutionContext) = {
     require(keys.nonEmpty, "AsyncActionRetriable:mapHandler - The set of keys to update can't be empty")
-    (action: AsyncActionRetriable[A, P], handler: ActionHandler[M, PotMap[K, V]],
-      updateEffect: RetryPolicy => Effect) => {
+    (action: AsyncActionRetriable[A, P], handler: ActionHandler[M, PotMap[K, V], A],
+      updateEffect: RetryPolicy => Effect[A]) => {
       import PotState._
       import handler._
       // updates/adds only those values whose key is in the `keys` set
@@ -294,8 +294,8 @@ object AsyncActionRetriable {
   def vectorHandler[V, A <: Traversable[(Int, Pot[V])], M, P <: AsyncActionRetriable[A, P]](indices: Set[Int])
     (implicit ec: ExecutionContext) = {
     require(indices.nonEmpty, "AsyncActionRetriable:vectorHandler - The set of indices to update can't be empty")
-    (action: AsyncActionRetriable[A, P], handler: ActionHandler[M, PotVector[V]],
-      updateEffect: RetryPolicy => Effect) => {
+    (action: AsyncActionRetriable[A, P], handler: ActionHandler[M, PotVector[V], P],
+      updateEffect: RetryPolicy => Effect[P]) => {
       import PotState._
       import handler._
       // updates/adds only those values whose index is in the `indices` set

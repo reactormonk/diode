@@ -23,10 +23,10 @@ trait RetryPolicy {
     * Retries an effect. Returns `Left` is retry is not possible and `Right[(RetryPolicy, Effects)]` if it is.
     *
     * @param reason Reason for failure leading to this retry. Used for filtering.
-    * @param effectProvider Effect to be retried.
+    * @param effectProvider Effect[A] to be retried.
     * @return
     */
-  def retry[T <: AnyRef](reason: Throwable, effectProvider: RetryPolicy => Effect): Either[Throwable, (RetryPolicy, Effect)]
+  def retry[A](reason: Throwable, effectProvider: RetryPolicy => Effect[A]): Either[Throwable, (RetryPolicy, Effect[A])]
 }
 
 object Retry {
@@ -37,7 +37,7 @@ object Retry {
   case object None extends RetryPolicy {
     override def canRetry(reason: Throwable) = false
 
-    override def retry[T <: AnyRef](reason: Throwable, effectProvider: RetryPolicy => Effect) =
+    override def retry[A](reason: Throwable, effectProvider: RetryPolicy => Effect[A]) =
       Left(reason)
   }
 
@@ -53,7 +53,7 @@ object Retry {
     override def canRetry(reason: Throwable) =
       retriesLeft > 0 && filter(reason)
 
-    override def retry[T <: AnyRef](reason: Throwable, effectProvider: RetryPolicy => Effect) = {
+    override def retry[A](reason: Throwable, effectProvider: RetryPolicy => Effect[A]) = {
       if (canRetry(reason)) {
         val nextPolicy = Immediate(retriesLeft - 1, filter)
         Right((nextPolicy, effectProvider(nextPolicy)))
@@ -80,7 +80,7 @@ object Retry {
     override def canRetry(reason: Throwable) =
       retriesLeft > 0 && filter(reason)
 
-    override def retry[T <: AnyRef](reason: Throwable, effectProvider: RetryPolicy => Effect) = {
+    override def retry[A](reason: Throwable, effectProvider: RetryPolicy => Effect[A]) = {
       if (canRetry(reason)) {
         // calculate next delay time
         val nextDelay = (delay.toUnit(TimeUnit.MILLISECONDS) * exp).millis

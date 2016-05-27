@@ -7,7 +7,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.scalajs.js
 
-class PersistStateIDB[M <: AnyRef, P <: js.Any](pickleF: M => P, unpickleF: P => M) extends PersistState[M, P] {
+class PersistStateIDB[M <: AnyRef, P <: js.Any, A](pickleF: M => P, unpickleF: P => M) extends PersistState[M, P, A] {
   final val storeName = "snapshots"
 
   // Opens (and creates) a database for snapshots

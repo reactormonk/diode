@@ -9,7 +9,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * Provides an action processor for saving and loading application state.
   * Needs to be extended with an actual implementation for pickling and save/load.
   */
-abstract class PersistState[M <: AnyRef, P] extends ActionProcessor[M] {
+abstract class PersistState[M <: AnyRef, +A, P] extends ActionProcessor[M, A] {
   import PersistState._
 
   // Function to serialize the application model into internal representation
@@ -27,7 +27,7 @@ abstract class PersistState[M <: AnyRef, P] extends ActionProcessor[M] {
   // internal action dispatched once loading is completed
   private final case class Loaded(newModel: M)
 
-  override def process(dispatch: Dispatcher, action: AnyRef, next: (AnyRef) => ActionResult[M], currentModel: M) = {
+  override def process(dispatch: Dispatcher[A], action: A, next: A => ActionResult[M, A], currentModel: M) = {
     action match {
       case Save(id) =>
         // pickle and save
